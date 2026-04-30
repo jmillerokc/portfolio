@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Volume Build — 720 Budget Analysis</title>
+<title>Volume Build — Volume Build Analysis and Budget Reallocation</title>
 <style>
 :root {
   --bg-primary: #ffffff;
@@ -160,8 +160,8 @@ footer {
 <body>
 <div class="container">
 
-<h1 class="page-h">Volume Build — 720 Budget Analysis</h1>
-<p class="page-sub">Historical site performance backed into the 720 budget breakdown, with a reallocation proposal.</p>
+<h1 class="page-h">Volume Build — Budget Analysis</h1>
+<p class="page-sub">Historical site performance backed into the budget breakdown, with a reallocation proposal.</p>
 
 <p class="section-h">Per-site budget vs. historical efficiency</p>
 <p class="section-sub">Each bubble = one Location × Category bucket. Bubble size = 720 annual budget per site. Top-left quadrant is the efficiency sweet spot.</p>
@@ -175,7 +175,7 @@ footer {
 <div class="chart-wrap" style="height:420px"><canvas id="bubbleChart"></canvas></div>
 <div class="insight">
   <span class="insight-label">Key insight</span>
-  Bay Area dominates the efficiency frontier — every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Under Performers (10 sites, $36K each) and Chicago Under Performers (6 sites, $49K each) — large bubbles in the bottom-right where CAC is high and growth is weak.
+  Bay Area dominates the efficiency frontier as every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Under Performers (10 sites, $36K each) and Chicago Under Performers (6 sites, $49K each), large bubbles in the bottom-right where CAC is high and growth is weak.
 </div>
 
 <div class="divider"></div>
@@ -199,12 +199,12 @@ footer {
 </div>
 <div class="insight">
   <span class="insight-label">Key insight</span>
-  Steady Stars look stable but have shrunk 16% since 2018 (1,153 → 965 weeks) — they're paying full freight for declining volume. Ramp Ups are the only category with double-digit growth (+28%) and acceptable CAC ($124). New sites cost $190 to acquire — nearly 2× a High Flyer — which is the cost of being early in the curve.
+  Steady Stars look stable but have shrunk 16% since 2018 (1,153 to 965 weeks). They're paying full freight for declining volume. Ramp Ups are the only category with double-digit growth (+28%) and acceptable CAC ($124). New sites cost $190 to acquire, nearly 2× a High Flyer, which is the cost of being early in the curve.
 </div>
 
 <div class="divider"></div>
 
-<p class="section-h">720 budget reallocation proposal</p>
+<p class="section-h">Budget reallocation proposal</p>
 <p class="section-sub">Cut 15% from the four lowest-efficiency buckets, redistribute to the three highest. Total spend stays flat at $2.02M.</p>
 <div class="metric-row">
   <div class="metric"><div class="metric-label">Total reallocated</div><div class="metric-val">$123,733</div></div>
@@ -212,9 +212,9 @@ footer {
   <div class="metric"><div class="metric-label">Recipient buckets</div><div class="metric-val">3</div></div>
   <div class="metric"><div class="metric-label">Net spend change</div><div class="metric-val">$0</div></div>
 </div>
-<div class="section-label">Reduce — high CAC, weak growth</div>
+<div class="section-label">Reduce: high CAC, weak growth</div>
 <div id="donor-list"></div>
-<div class="section-label">Increase — low CAC, strong growth</div>
+<div class="section-label">Increase: low CAC, strong growth</div>
 <div id="recipient-list"></div>
 <div class="insight">
   <span class="insight-label">Key insight</span>
@@ -222,7 +222,6 @@ footer {
 </div>
 
 <footer>
-  Volume Build dashboard · Data sourced from Sheet1 historical performance and 720 breakdown allocations.
 </footer>
 
 </div>
