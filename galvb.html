@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volume Build — 720 Budget Analysis</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f6f2;
+  --bg-tertiary: #f1efe8;
+  --text-primary: #2c2c2a;
+  --text-secondary: #5f5e5a;
+  --text-tertiary: #888780;
+  --text-info: #185fa5;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a18;
+    --bg-secondary: #232220;
+    --bg-tertiary: #2c2c2a;
+    --text-primary: #e8e6dd;
+    --text-secondary: #b4b2a9;
+    --text-tertiary: #888780;
+    --text-info: #85b7eb;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.15);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 24px 16px;
+  line-height: 1.6;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 32px;
+  border: 0.5px solid var(--border);
+}
+.page-h { font-size: 26px; font-weight: 500; margin: 0 0 4px; }
+.page-sub { font-size: 14px; color: var(--text-secondary); margin: 0 0 32px; }
+.section-h { font-size: 18px; font-weight: 500; margin: 0 0 4px; }
+.section-sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 16px; }
+.insight {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0 24px;
+  font-size: 13px;
+  line-height: 1.6;
+  border-left: 3px solid var(--text-info);
+}
+.insight-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-info);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  display: block;
+  text-transform: uppercase;
+}
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0 0 16px;
+}
+.metric {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.metric-label { font-size: 11px; color: var(--text-secondary); margin: 0 0 2px; }
+.metric-val { font-size: 20px; font-weight: 500; }
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.legend-row span { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.legend-sq { width: 10px; height: 10px; border-radius: 2px; }
+.divider { height: 1px; background: var(--border); margin: 32px 0; }
+.bucket-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr 0.9fr 0.9fr 1fr;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+.bucket-row.reduce { background: #fcebeb; }
+.bucket-row.increase { background: #eaf3de; }
+@media (prefers-color-scheme: dark) {
+  .bucket-row.reduce { background: #501313; }
+  .bucket-row.increase { background: #173404; }
+}
+.bucket-name { font-weight: 500; }
+.bucket-sub { font-size: 11px; color: var(--text-secondary); }
+.bucket-num { font-variant-numeric: tabular-nums; text-align: right; }
+.bucket-delta { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }
+.bucket-delta.pos { color: #27500a; }
+.bucket-delta.neg { color: #791f1f; }
+@media (prefers-color-scheme: dark) {
+  .bucket-delta.pos { color: #c0dd97; }
+  .bucket-delta.neg { color: #f7c1c1; }
+}
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.tag.reduce { background: #f7c1c1; color: #791f1f; }
+.tag.increase { background: #c0dd97; color: #27500a; }
+@media (prefers-color-scheme: dark) {
+  .tag.reduce { background: #791f1f; color: #fcebeb; }
+  .tag.increase { background: #3b6d11; color: #eaf3de; }
+}
+.section-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 16px 0 6px;
+}
+.chart-wrap { position: relative; width: 100%; }
+footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+@media (max-width: 600px) {
+  .container { padding: 20px 16px; }
+  .bucket-row { grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; }
+  .bucket-num, .bucket-delta { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1 class="page-h">Volume Build — 720 Budget Analysis</h1>
+<p class="page-sub">Historical site performance backed into the 720 budget breakdown, with a reallocation proposal.</p>
+
+<p class="section-h">Per-site budget vs. historical efficiency</p>
+<p class="section-sub">Each bubble = one Location × Category bucket. Bubble size = 720 annual budget per site. Top-left quadrant is the efficiency sweet spot.</p>
+<div class="legend-row">
+  <span><span class="legend-dot" style="background:#1D9E75"></span>High Flyer</span>
+  <span><span class="legend-dot" style="background:#378ADD"></span>Steady Star</span>
+  <span><span class="legend-dot" style="background:#EF9F27"></span>Ramp Up</span>
+  <span><span class="legend-dot" style="background:#D4537E"></span>New</span>
+  <span><span class="legend-dot" style="background:#D85A30"></span>Under Performer</span>
+</div>
+<div class="chart-wrap" style="height:420px"><canvas id="bubbleChart"></canvas></div>
+<div class="insight">
+  <span class="insight-label">Key insight</span>
+  Bay Area dominates the efficiency frontier — every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Under Performers (10 sites, $36K each) and Chicago Under Performers (6 sites, $49K each) — large bubbles in the bottom-right where CAC is high and growth is weak.
+</div>
+
+<div class="divider"></div>
+
+<p class="section-h">Category performance — the 7-year arc</p>
+<p class="section-sub">High Flyers and Steady Stars carry the volume, Ramp Ups carry the growth, Under Performers and New sites burn the most cash per acquisition.</p>
+<div class="chart-wrap" style="height:300px;margin-bottom:8px"><canvas id="catChart"></canvas></div>
+<div class="legend-row" style="justify-content:center">
+  <span><span class="legend-sq" style="background:#B4B2A9"></span>Avg 2018 weeks</span>
+  <span><span class="legend-sq" style="background:#185FA5"></span>Avg 2024 weeks</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
+  <div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:6px">Avg CAC by category ($)</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="cacChart"></canvas></div>
+  </div>
+  <div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:6px">Avg growth 2024 vs 2023 (%)</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="growthChart"></canvas></div>
+  </div>
+</div>
+<div class="insight">
+  <span class="insight-label">Key insight</span>
+  Steady Stars look stable but have shrunk 16% since 2018 (1,153 → 965 weeks) — they're paying full freight for declining volume. Ramp Ups are the only category with double-digit growth (+28%) and acceptable CAC ($124). New sites cost $190 to acquire — nearly 2× a High Flyer — which is the cost of being early in the curve.
+</div>
+
+<div class="divider"></div>
+
+<p class="section-h">720 budget reallocation proposal</p>
+<p class="section-sub">Cut 15% from the four lowest-efficiency buckets, redistribute to the three highest. Total spend stays flat at $2.02M.</p>
+<div class="metric-row">
+  <div class="metric"><div class="metric-label">Total reallocated</div><div class="metric-val">$123,733</div></div>
+  <div class="metric"><div class="metric-label">Donor buckets</div><div class="metric-val">4</div></div>
+  <div class="metric"><div class="metric-label">Recipient buckets</div><div class="metric-val">3</div></div>
+  <div class="metric"><div class="metric-label">Net spend change</div><div class="metric-val">$0</div></div>
+</div>
+<div class="section-label">Reduce — high CAC, weak growth</div>
+<div id="donor-list"></div>
+<div class="section-label">Increase — low CAC, strong growth</div>
+<div id="recipient-list"></div>
+<div class="insight">
+  <span class="insight-label">Key insight</span>
+  Chicago Under Performers lose $44K (16 sites at -15%), SoCal Under Performers lose $54K. That money funds Bay Area Ramp Ups (+60%, where 25% growth is already happening at $94 CAC) and Denver's lone Ramp Up (+150%, at 65% growth and $108 CAC). The reallocation moves dollars toward where the math is already proving itself.
+</div>
+
+<footer>
+  Volume Build dashboard · Data sourced from Sheet1 historical performance and 720 breakdown allocations.
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const colors = {'High Flyer':'#1D9E75','Steady Star':'#378ADD','Ramp Up':'#EF9F27','New':'#D4537E','Under Performer':'#D85A30'};
+
+const buckets = [
+ {loc:"Bay Area",cat:"High Flyer",sites:6,cac:100,growth:14.0,budget:26863},
+ {loc:"Bay Area",cat:"Ramp Up",sites:3,cac:94,growth:24.7,budget:21709},
+ {loc:"Bay Area",cat:"Steady Star",sites:10,cac:98,growth:-2.0,budget:26863},
+ {loc:"Bay Area",cat:"Under Performer",sites:4,cac:103,growth:7.0,budget:32865},
+ {loc:"Chicago",cat:"Ramp Up",sites:2,cac:144,growth:31.0,budget:31093},
+ {loc:"Chicago",cat:"Steady Star",sites:1,cac:132,growth:15.0,budget:19508},
+ {loc:"Chicago",cat:"Under Performer",sites:6,cac:144,growth:8.0,budget:49168},
+ {loc:"Denver",cat:"New",sites:4,cac:149,growth:2.1,budget:32819},
+ {loc:"Denver",cat:"Ramp Up",sites:1,cac:108,growth:65.5,budget:32819},
+ {loc:"Seattle",cat:"Under Performer",sites:1,cac:182,growth:8.0,budget:36144},
+ {loc:"SoCal",cat:"High Flyer",sites:1,cac:102,growth:25.0,budget:26613},
+ {loc:"SoCal",cat:"Ramp Up",sites:7,cac:134,growth:23.4,budget:21491},
+ {loc:"SoCal",cat:"Steady Star",sites:1,cac:158,growth:0.0,budget:26613},
+ {loc:"SoCal",cat:"Under Performer",sites:10,cac:136,growth:10.9,budget:36246}
+];
+
+const cats = ['High Flyer','Steady Star','Ramp Up','New','Under Performer'];
+const bubbleDatasets = cats.map(cat => ({
+  label: cat,
+  data: buckets.filter(d => d.cat === cat).map(d => ({
+    x: d.cac, y: d.growth, r: Math.sqrt(d.budget/1000)*2.2,
+    loc: d.loc, sites: d.sites, budget: d.budget
+  })),
+  backgroundColor: colors[cat]+'99',
+  borderColor: colors[cat], borderWidth: 1
+}));
+
+new Chart(document.getElementById('bubbleChart'), {
+  type:'bubble', data:{datasets:bubbleDatasets},
+  options:{responsive:true,maintainAspectRatio:false,layout:{padding:12},
+    plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:(ctx)=>{const d=ctx.raw;return [
+        `${d.loc} — ${ctx.dataset.label}`,
+        `CAC: $${Math.round(d.x)}  |  Growth: ${d.y.toFixed(1)}%`,
+        `${d.sites} site${d.sites>1?'s':''}  |  $${d.budget.toLocaleString()}/site`
+      ];}}}},
+    scales:{
+      x:{title:{display:true,text:'Historical CAC ($) — lower is better →'},min:70,max:200,reverse:true,grid:{color:'rgba(128,128,128,0.1)'}},
+      y:{title:{display:true,text:'% Growth 2024 vs 2023'},min:-10,max:70,grid:{color:'rgba(128,128,128,0.1)'},ticks:{callback:(v)=>v+'%'}}
+    }}
+});
+
+const catData = [
+  {cat:'High Flyer',sites:7,avg_2018:1236,avg_2024:1062,growth:15.6,cac:100},
+  {cat:'Steady Star',sites:12,avg_2018:1153,avg_2024:965,growth:-0.4,cac:106},
+  {cat:'Ramp Up',sites:13,avg_2018:665,avg_2024:620,growth:28.1,cac:124},
+  {cat:'New',sites:13,avg_2018:0,avg_2024:392,growth:2.1,cac:190},
+  {cat:'Under Performer',sites:21,avg_2018:592,avg_2024:471,growth:9.2,cac:134}
+];
+
+new Chart(document.getElementById('catChart'),{
+  type:'bar',
+  data:{labels:catData.map(c=>c.cat),datasets:[
+    {label:'Avg 2018 weeks',data:catData.map(c=>c.avg_2018||null),backgroundColor:'#B4B2A9',borderRadius:4},
+    {label:'Avg 2024 weeks',data:catData.map(c=>c.avg_2024),backgroundColor:'#185FA5',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:(ctx)=>`${ctx.dataset.label}: ${ctx.raw?Math.round(ctx.raw).toLocaleString():'n/a'} weeks`}}},
+    scales:{x:{grid:{display:false}},
+      y:{title:{display:true,text:'Avg total weeks per site'},grid:{color:'rgba(128,128,128,0.1)'}}}}
+});
+
+new Chart(document.getElementById('cacChart'),{
+  type:'bar',
+  data:{labels:catData.map(c=>c.cat),datasets:[{
+    data:catData.map(c=>c.cac),
+    backgroundColor:catData.map(c=>colors[c.cat]),borderRadius:4
+  }]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:(ctx)=>`$${Math.round(ctx.raw)}`}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
+      y:{ticks:{callback:(v)=>'$'+v},grid:{color:'rgba(128,128,128,0.1)'}}}}
+});
+
+new Chart(document.getElementById('growthChart'),{
+  type:'bar',
+  data:{labels:catData.map(c=>c.cat),datasets:[{
+    data:catData.map(c=>c.growth),
+    backgroundColor:catData.map(c=>c.growth<0?'#E24B4A':colors[c.cat]),borderRadius:4
+  }]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:(ctx)=>ctx.raw.toFixed(1)+'%'}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
+      y:{ticks:{callback:(v)=>v+'%'},grid:{color:'rgba(128,128,128,0.1)'}}}}
+});
+
+const reallocs = [
+  {loc:'Chicago',cat:'Under Performer',sites:6,cac:144,growth:8.0,old:49168,new_:41793,change:-44251,pct:-15.0,action:'reduce'},
+  {loc:'SoCal',cat:'Under Performer',sites:10,cac:136,growth:10.9,old:36246,new_:30809,change:-54369,pct:-15.0,action:'reduce'},
+  {loc:'Seattle',cat:'Under Performer',sites:1,cac:182,growth:8.0,old:36144,new_:30722,change:-5422,pct:-15.0,action:'reduce'},
+  {loc:'Denver',cat:'New',sites:4,cac:149,growth:2.1,old:32819,new_:27896,change:-19691,pct:-15.0,action:'reduce'},
+  {loc:'Denver',cat:'Ramp Up',sites:1,cac:108,growth:65.5,old:32819,new_:82541,change:49722,pct:151.5,action:'increase'},
+  {loc:'Bay Area',cat:'Ramp Up',sites:3,cac:94,growth:24.7,old:21709,new_:34635,change:38779,pct:59.5,action:'increase'},
+  {loc:'SoCal',cat:'High Flyer',sites:1,cac:102,growth:25.0,old:26613,new_:61844,change:35231,pct:132.4,action:'increase'}
+];
+
+function fmt(n){return '$'+Math.abs(Math.round(n)).toLocaleString()}
+function rowHTML(r){
+  const sign = r.change>=0 ? '+' : '−';
+  const tagText = r.action==='reduce'?'Reduce':'Increase';
+  return `<div class="bucket-row ${r.action}">
+    <div>
+      <div class="bucket-name">${r.loc} · ${r.cat}</div>
+      <div class="bucket-sub">${r.sites} site${r.sites>1?'s':''} · CAC $${r.cac} · ${r.growth>=0?'+':''}${r.growth.toFixed(1)}% growth</div>
+    </div>
+    <div><span class="tag ${r.action}">${tagText}</span></div>
+    <div class="bucket-num"><div class="bucket-sub">old / site</div>${fmt(r.old)}</div>
+    <div class="bucket-num"><div class="bucket-sub">new / site</div>${fmt(r.new_)}</div>
+    <div class="bucket-delta ${r.change>=0?'pos':'neg'}">${sign}${fmt(r.change)}<div class="bucket-sub" style="font-weight:400">${r.pct>=0?'+':''}${r.pct.toFixed(0)}% bucket</div></div>
+  </div>`;
+}
+document.getElementById('donor-list').innerHTML = reallocs.filter(r=>r.action==='reduce').map(rowHTML).join('');
+document.getElementById('recipient-list').innerHTML = reallocs.filter(r=>r.action==='increase').map(rowHTML).join('');
+</script>
+</body>
+</html>
