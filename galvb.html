@@ -1,234 +1,722 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Volume Build — Volume Build Analysis and Budget Reallocation</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Volume Build: Budget and Reallocation by Performance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f7f6f2;
-  --bg-tertiary: #f1efe8;
-  --text-primary: #2c2c2a;
-  --text-secondary: #5f5e5a;
-  --text-tertiary: #888780;
-  --text-info: #185fa5;
-  --border: rgba(0,0,0,0.08);
-  --border-strong: rgba(0,0,0,0.15);
-}
-@media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #1a1a18;
-    --bg-secondary: #232220;
-    --bg-tertiary: #2c2c2a;
-    --text-primary: #e8e6dd;
-    --text-secondary: #b4b2a9;
-    --text-tertiary: #888780;
-    --text-info: #85b7eb;
-    --border: rgba(255,255,255,0.08);
-    --border-strong: rgba(255,255,255,0.15);
+    --ink: #0f1115;
+    --ink-soft: #2b2f3a;
+    --paper: #f7f5f0;
+    --paper-2: #efece4;
+    --rule: #d9d4c7;
+    --accent: #d4502a;
+    --accent-soft: #e8d6c8;
+    --green: #2f6d4f;
+    --muted: #6c6a63;
+    --max: 1180px;
+
+    /* Category palette — kept from original Galvb but re-tuned for warm paper */
+    --cat-high: #2f6d4f;
+    --cat-steady: #3a6e9c;
+    --cat-ramp: #d4502a;
+    --cat-new: #b85a7a;
+    --cat-under: #8a3a26;
   }
-}
-* { box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  margin: 0;
-  padding: 24px 16px;
-  line-height: 1.6;
-}
-.container {
-  max-width: 960px;
-  margin: 0 auto;
-  background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 32px;
-  border: 0.5px solid var(--border);
-}
-.page-h { font-size: 26px; font-weight: 500; margin: 0 0 4px; }
-.page-sub { font-size: 14px; color: var(--text-secondary); margin: 0 0 32px; }
-.section-h { font-size: 18px; font-weight: 500; margin: 0 0 4px; }
-.section-sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 16px; }
-.insight {
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin: 12px 0 24px;
-  font-size: 13px;
-  line-height: 1.6;
-  border-left: 3px solid var(--text-info);
-}
-.insight-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-info);
-  letter-spacing: 0.04em;
-  margin-bottom: 4px;
-  display: block;
-  text-transform: uppercase;
-}
-.metric-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
-  margin: 0 0 16px;
-}
-.metric {
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  padding: 12px 14px;
-}
-.metric-label { font-size: 11px; color: var(--text-secondary); margin: 0 0 2px; }
-.metric-val { font-size: 20px; font-weight: 500; }
-.legend-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 8px;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.legend-row span { display: flex; align-items: center; gap: 6px; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-.legend-sq { width: 10px; height: 10px; border-radius: 2px; }
-.divider { height: 1px; background: var(--border); margin: 32px 0; }
-.bucket-row {
-  display: grid;
-  grid-template-columns: 1.4fr 0.6fr 0.9fr 0.9fr 1fr;
-  gap: 8px;
-  align-items: center;
-  font-size: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin-bottom: 4px;
-}
-.bucket-row.reduce { background: #fcebeb; }
-.bucket-row.increase { background: #eaf3de; }
-@media (prefers-color-scheme: dark) {
-  .bucket-row.reduce { background: #501313; }
-  .bucket-row.increase { background: #173404; }
-}
-.bucket-name { font-weight: 500; }
-.bucket-sub { font-size: 11px; color: var(--text-secondary); }
-.bucket-num { font-variant-numeric: tabular-nums; text-align: right; }
-.bucket-delta { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }
-.bucket-delta.pos { color: #27500a; }
-.bucket-delta.neg { color: #791f1f; }
-@media (prefers-color-scheme: dark) {
-  .bucket-delta.pos { color: #c0dd97; }
-  .bucket-delta.neg { color: #f7c1c1; }
-}
-.tag {
-  display: inline-block;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-.tag.reduce { background: #f7c1c1; color: #791f1f; }
-.tag.increase { background: #c0dd97; color: #27500a; }
-@media (prefers-color-scheme: dark) {
-  .tag.reduce { background: #791f1f; color: #fcebeb; }
-  .tag.increase { background: #3b6d11; color: #eaf3de; }
-}
-.section-label {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 16px 0 6px;
-}
-.chart-wrap { position: relative; width: 100%; }
-footer {
-  margin-top: 32px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text-tertiary);
-  text-align: center;
-}
-@media (max-width: 600px) {
-  .container { padding: 20px 16px; }
-  .bucket-row { grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; }
-  .bucket-num, .bucket-delta { text-align: left; }
-}
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(15,17,21,0.025) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 32px;
+    max-width: var(--max);
+    margin: 0 auto;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    transition: gap 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.35s ease,
+                border-color 0.35s ease,
+                background 0.35s ease;
+  }
+  .back-link .arrow {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .back-link:hover {
+    gap: 14px;
+    color: var(--accent);
+    border-color: var(--ink);
+    background: #fff;
+  }
+  .back-link:hover .arrow {
+    transform: translateX(-4px);
+  }
+
+  /* Hero */
+  .hero {
+    padding: 90px 0 70px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(38px, 5.4vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 20px;
+    max-width: 22ch;
+  }
+  .hero .subhead {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+  .hero .lede {
+    max-width: 56ch;
+    font-size: 18px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* Scorecard */
+  .scorecard {
+    margin-top: 56px;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+  .scorecard-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
+    max-width: 50ch;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .hero-stats .stat {
+    padding: 24px 24px 24px 0;
+    border-right: 1px solid var(--rule);
+  }
+  .hero-stats .stat:last-child { border-right: none; padding-right: 0; }
+  .hero-stats .stat:not(:first-child) { padding-left: 24px; }
+  .hero-stats .stat .num {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .hero-stats .stat .num .arrow {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .hero-stats .stat .label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.4;
+  }
+
+  /* Sections */
+  section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    margin-bottom: 48px;
+    align-items: start;
+  }
+  .section-head .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 12px;
+    border-top: 2px solid var(--ink);
+  }
+  .section-head h2 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    margin: 0 0 16px;
+    max-width: 22ch;
+  }
+  .section-head p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+  }
+  .body-grid .side {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .body-grid .content > * + * { margin-top: 20px; }
+  .body-grid .content p { margin: 0; }
+
+  .body-grid h3 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.015em;
+    margin: 40px 0 12px;
+  }
+
+  /* Chart container with corner brackets */
+  .chart-block {
+    background: #fff;
+    border: 1px solid var(--rule);
+    padding: 36px;
+    margin: 32px 0;
+    position: relative;
+  }
+  .chart-block::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 24px; height: 24px;
+    border-top: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+  }
+  .chart-block::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 24px; height: 24px;
+    border-bottom: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+  }
+  .chart-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .chart-heading {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin: 0 0 28px;
+  }
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* Legend */
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .legend-row span { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-sq { width: 12px; height: 12px; }
+
+  /* Insight block — same dark style as Speed to Lead */
+  .insight {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 56px;
+    margin: 48px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight::before {
+    content: "“";
+    position: absolute;
+    top: 12px;
+    left: 24px;
+    font-family: 'Fraunces', serif;
+    font-size: 110px;
+    color: var(--accent);
+    opacity: 0.3;
+    line-height: 1;
+  }
+  .insight .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .insight blockquote {
+    margin: 0;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(18px, 1.8vw, 22px);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+    max-width: 56ch;
+  }
+
+  /* Metrics row (Bay area / SoCal scorecards in section 3) */
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0;
+    margin: 0 0 24px;
+    border: 1px solid var(--rule);
+    background: #fff;
+  }
+  .metric {
+    padding: 20px 22px;
+    border-right: 1px solid var(--rule);
+  }
+  .metric:last-child { border-right: none; }
+  .metric-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 6px;
+  }
+  .metric-val {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Section label */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 24px 0 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Reallocation rows */
+  .bucket-row {
+    display: grid;
+    grid-template-columns: 1.5fr 0.7fr 0.8fr 0.8fr 1fr;
+    gap: 12px;
+    align-items: center;
+    font-size: 13px;
+    padding: 16px 18px;
+    margin-bottom: 1px;
+    background: #fff;
+    border: 1px solid var(--rule);
+  }
+  .bucket-row.reduce {
+    background: #faf0ec;
+    border-left: 3px solid var(--accent);
+  }
+  .bucket-row.increase {
+    background: #eef3ee;
+    border-left: 3px solid var(--green);
+  }
+  .bucket-name {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .bucket-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .bucket-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    font-size: 13px;
+  }
+  .bucket-num .bucket-sub {
+    text-align: right;
+    margin-bottom: 2px;
+    margin-top: 0;
+  }
+  .bucket-delta {
+    font-family: 'Inter Tight', sans-serif;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .bucket-delta.pos { color: var(--green); }
+  .bucket-delta.neg { color: var(--accent); }
+  .bucket-delta .bucket-sub {
+    text-align: right;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .tag.reduce { background: var(--accent); color: var(--paper); }
+  .tag.increase { background: var(--green); color: var(--paper); }
+
+  /* Two-column chart layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .two-col .col-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  footer {
+    padding: 70px 0 50px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  footer .mark {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 880px) {
+    .topbar { padding: 20px 24px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .wrap { padding: 0 24px; }
+    .hero { padding: 50px 0 40px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-stats .stat { padding: 18px 14px !important; border-right: none !important; border-bottom: 1px solid var(--rule); }
+    .hero-stats .stat:nth-child(odd) { border-right: 1px solid var(--rule) !important; }
+    .hero-stats .stat:nth-last-child(-n+2) { border-bottom: none; }
+    section { padding: 56px 0; }
+    .section-head, .body-grid { grid-template-columns: 1fr; gap: 24px; }
+    .body-grid .side { display: none; }
+    .chart-block { padding: 24px 18px; }
+    .insight { padding: 36px 24px; }
+    .two-col { grid-template-columns: 1fr; }
+    .bucket-row { grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; padding: 14px; }
+    .bucket-num, .bucket-delta { text-align: left; }
+    .bucket-num .bucket-sub, .bucket-delta .bucket-sub { text-align: left; }
+    .metric-row { grid-template-columns: repeat(2, 1fr); }
+    .metric { border-right: none; border-bottom: 1px solid var(--rule); }
+    .metric:nth-child(odd) { border-right: 1px solid var(--rule); }
+    .metric:nth-last-child(-n+2) { border-bottom: none; }
+  }
 </style>
 </head>
 <body>
-<div class="container">
 
-<h1 class="page-h">Volume Build — Budget Analysis</h1>
-<p class="page-sub">Historical site performance backed into the budget breakdown, with a reallocation proposal.</p>
+<header class="topbar">
+  <div>Case Study&nbsp;&nbsp;/&nbsp;&nbsp;Budget Strategy</div>
+  <a class="back-link" href="https://jmillerokc.github.io/portfolio/">
+    <span class="arrow">←</span>
+    <span>Take me back</span>
+  </a>
+</header>
 
-<p class="section-h">Per-site budget vs. historical efficiency</p>
-<p class="section-sub">Each bubble = one Location × Category bucket. Bubble size = 720 annual budget per site. Top-left quadrant is the efficiency sweet spot.</p>
-<div class="legend-row">
-  <span><span class="legend-dot" style="background:#1D9E75"></span>High Flyer</span>
-  <span><span class="legend-dot" style="background:#378ADD"></span>Steady Star</span>
-  <span><span class="legend-dot" style="background:#EF9F27"></span>Ramp Up</span>
-  <span><span class="legend-dot" style="background:#D4537E"></span>New</span>
-  <span><span class="legend-dot" style="background:#D85A30"></span>Under Performer</span>
-</div>
-<div class="chart-wrap" style="height:420px"><canvas id="bubbleChart"></canvas></div>
-<div class="insight">
-  <span class="insight-label">Key insight</span>
-  Bay Area dominates the efficiency frontier as every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Under Performers (10 sites, $36K each) and Chicago Under Performers (6 sites, $49K each), large bubbles in the bottom-right where CAC is high and growth is weak.
-</div>
+<!-- Hero -->
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Case Study</div>
+    <h1>Volume Build: Budget Analysis and Reallocation</h1>
+    <div class="subhead">Historical efficiency analysis with reallocation proposal</div>
+    <p class="lede">Backed seven years of site-level performance into the 720 budget breakdown to find which Location and Category buckets earn their spend, then proposed a flat-budget reallocation that moves dollars to where the math is already proving itself.</p>
 
-<div class="divider"></div>
-
-<p class="section-h">Category performance — the 7-year arc</p>
-<p class="section-sub">High Flyers and Steady Stars carry the volume, Ramp Ups carry the growth, Under Performers and New sites burn the most cash per acquisition.</p>
-<div class="chart-wrap" style="height:300px;margin-bottom:8px"><canvas id="catChart"></canvas></div>
-<div class="legend-row" style="justify-content:center">
-  <span><span class="legend-sq" style="background:#B4B2A9"></span>Avg 2018 weeks</span>
-  <span><span class="legend-sq" style="background:#185FA5"></span>Avg 2024 weeks</span>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
-  <div>
-    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:6px">Avg CAC by category ($)</div>
-    <div class="chart-wrap" style="height:200px"><canvas id="cacChart"></canvas></div>
-  </div>
-  <div>
-    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:6px">Avg growth 2024 vs 2023 (%)</div>
-    <div class="chart-wrap" style="height:200px"><canvas id="growthChart"></canvas></div>
-  </div>
-</div>
-<div class="insight">
-  <span class="insight-label">Key insight</span>
-  Steady Stars look stable but have shrunk 16% since 2018 (1,153 to 965 weeks). They're paying full freight for declining volume. Ramp Ups are the only category with double-digit growth (+28%) and acceptable CAC ($124). New sites cost $190 to acquire, nearly 2× a High Flyer, which is the cost of being early in the curve.
+    <div class="scorecard">
+      <h2 class="scorecard-title">Per-site CAC and growth, plotted against budget allocation, surfaced a clear efficiency frontier:</h2>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num">$2.02<span class="arrow">M</span></div>
+          <div class="label">Total annual spend held flat</div>
+        </div>
+        <div class="stat">
+          <div class="num">$124<span class="arrow">K</span></div>
+          <div class="label">Reallocated across 7 buckets</div>
+        </div>
+        <div class="stat">
+          <div class="num">14</div>
+          <div class="label">Location × category buckets analyzed</div>
+        </div>
+        <div class="stat">
+          <div class="num">7<span class="arrow"> yrs</span></div>
+          <div class="label">Of historical site performance</div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
-<div class="divider"></div>
+<!-- Section 1 -->
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">01 / Diagnosis</div>
+      <div>
+        <h2>Per-site budget against historical efficiency.</h2>
+        <p>Each bubble is one Location and Category bucket. Bubble size is the annual budget per site. The top-left quadrant, low CAC, high growth, is the efficiency sweet spot.</p>
+      </div>
+    </div>
 
-<p class="section-h">Budget reallocation proposal</p>
-<p class="section-sub">Cut 15% from the four lowest-efficiency buckets, redistribute to the three highest. Total spend stays flat at $2.02M.</p>
-<div class="metric-row">
-  <div class="metric"><div class="metric-label">Total reallocated</div><div class="metric-val">$123,733</div></div>
-  <div class="metric"><div class="metric-label">Donor buckets</div><div class="metric-val">4</div></div>
-  <div class="metric"><div class="metric-label">Recipient buckets</div><div class="metric-val">3</div></div>
-  <div class="metric"><div class="metric-label">Net spend change</div><div class="metric-val">$0</div></div>
+    <div class="body-grid">
+      <div class="side">Bucket<br>Mapping</div>
+      <div class="content">
+        <div class="chart-block">
+          <div class="chart-title">FIG. 01 / EFFICIENCY FRONTIER</div>
+          <div class="chart-heading">Where each bucket sits on CAC vs. growth</div>
+
+          <div class="legend-row">
+            <span><span class="legend-dot" style="background:var(--cat-high)"></span>High Flyer</span>
+            <span><span class="legend-dot" style="background:var(--cat-steady)"></span>Steady Star</span>
+            <span><span class="legend-dot" style="background:var(--cat-ramp)"></span>Ramp Up</span>
+            <span><span class="legend-dot" style="background:var(--cat-new)"></span>New</span>
+            <span><span class="legend-dot" style="background:var(--cat-under)"></span>Under Performer</span>
+          </div>
+          <div class="chart-wrap" style="height:440px"><canvas id="bubbleChart"></canvas></div>
+        </div>
+
+        <div class="insight">
+          <div class="label">Key Insight</div>
+          <blockquote>Bay Area dominates the efficiency frontier, every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Under Performers (10 sites at $36K each) and Chicago Under Performers (6 sites at $49K each), large bubbles in the bottom-right where CAC is high and growth is weak.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
-<div class="section-label">Reduce: high CAC, weak growth</div>
-<div id="donor-list"></div>
-<div class="section-label">Increase: low CAC, strong growth</div>
-<div id="recipient-list"></div>
-<div class="insight">
-  <span class="insight-label">Key insight</span>
-  Chicago Under Performers lose $44K (16 sites at -15%), SoCal Under Performers lose $54K. That money funds Bay Area Ramp Ups (+60%, where 25% growth is already happening at $94 CAC) and Denver's lone Ramp Up (+150%, at 65% growth and $108 CAC). The reallocation moves dollars toward where the math is already proving itself.
+
+<!-- Section 2 -->
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">02 / Pattern</div>
+      <div>
+        <h2>The seven-year arc by category.</h2>
+        <p>High Flyers and Steady Stars carry the volume. Ramp Ups carry the growth. Under Performers and New sites burn the most cash per acquisition.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Category<br>Trends</div>
+      <div class="content">
+        <div class="chart-block">
+          <div class="chart-title">FIG. 02 / VOLUME OVER TIME</div>
+          <div class="chart-heading">Average weeks per site, 2018 vs 2024</div>
+
+          <div class="chart-wrap" style="height:300px;margin-bottom:8px"><canvas id="catChart"></canvas></div>
+          <div class="legend-row" style="justify-content:center;margin-top:16px">
+            <span><span class="legend-sq" style="background:#b8b3a3"></span>Avg 2018 weeks</span>
+            <span><span class="legend-sq" style="background:var(--ink)"></span>Avg 2024 weeks</span>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="chart-block">
+            <div class="chart-title">FIG. 02A / EFFICIENCY</div>
+            <div class="chart-heading">Avg CAC by category</div>
+            <div class="chart-wrap" style="height:200px"><canvas id="cacChart"></canvas></div>
+          </div>
+          <div class="chart-block">
+            <div class="chart-title">FIG. 02B / MOMENTUM</div>
+            <div class="chart-heading">Avg growth, 2024 vs 2023</div>
+            <div class="chart-wrap" style="height:200px"><canvas id="growthChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="label">Key Insight</div>
+          <blockquote>Steady Stars look stable but have shrunk 16% since 2018 (1,153 → 965 weeks). They're paying full freight for declining volume. Ramp Ups are the only category with double-digit growth (+28%) at acceptable CAC ($124). New sites cost $190 to acquire, nearly 2× a High Flyer,  which is the cost of being early in the curve.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Section 3 -->
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">03 / Proposal</div>
+      <div>
+        <h2>Reallocation, with total spend held flat.</h2>
+        <p>Cut 15% from the four lowest-efficiency buckets and redistribute to the three highest. Same $2.02M envelope, working harder.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Reallocation<br>Mechanics</div>
+      <div class="content">
+
+        <div class="metric-row">
+          <div class="metric"><div class="metric-label">Total reallocated</div><div class="metric-val">$123,733</div></div>
+          <div class="metric"><div class="metric-label">Donor buckets</div><div class="metric-val">4</div></div>
+          <div class="metric"><div class="metric-label">Recipient buckets</div><div class="metric-val">3</div></div>
+          <div class="metric"><div class="metric-label">Net spend change</div><div class="metric-val">$0</div></div>
+        </div>
+
+        <div class="section-label">Reduce — high CAC, weak growth</div>
+        <div id="donor-list"></div>
+
+        <div class="section-label">Increase — low CAC, strong growth</div>
+        <div id="recipient-list"></div>
+
+        <div class="insight">
+          <div class="label">Takeaway</div>
+          <blockquote>Chicago Under Performers lose $44K (16 sites at -15%), SoCal Under Performers lose $54K. That money funds Bay Area Ramp Ups (+60%, where 25% growth is already happening at $94 CAC) and Denver's lone Ramp Up (+150%, at 65% growth and $108 CAC). The reallocation moves dollars toward where the math is already proving itself.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <footer>
+  <div class="wrap">
+    <div class="mark">Where the math is already proving itself.</div>
+    <div>Case Study · Personal Portfolio · 2024</div>
+  </div>
 </footer>
-
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const colors = {'High Flyer':'#1D9E75','Steady Star':'#378ADD','Ramp Up':'#EF9F27','New':'#D4537E','Under Performer':'#D85A30'};
+const colors = {
+  'High Flyer':   '#2f6d4f',
+  'Steady Star':  '#3a6e9c',
+  'Ramp Up':      '#d4502a',
+  'New':          '#b85a7a',
+  'Under Performer': '#8a3a26'
+};
+
+// Set Chart.js defaults to match editorial type system
+Chart.defaults.font.family = "'Inter Tight', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#6c6a63';
 
 const buckets = [
  {loc:"Bay Area",cat:"High Flyer",sites:6,cac:100,growth:14.0,budget:26863},
@@ -255,21 +743,27 @@ const bubbleDatasets = cats.map(cat => ({
     loc: d.loc, sites: d.sites, budget: d.budget
   })),
   backgroundColor: colors[cat]+'99',
-  borderColor: colors[cat], borderWidth: 1
+  borderColor: colors[cat], borderWidth: 1.5
 }));
 
 new Chart(document.getElementById('bubbleChart'), {
   type:'bubble', data:{datasets:bubbleDatasets},
   options:{responsive:true,maintainAspectRatio:false,layout:{padding:12},
     plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:(ctx)=>{const d=ctx.raw;return [
-        `${d.loc} — ${ctx.dataset.label}`,
-        `CAC: $${Math.round(d.x)}  |  Growth: ${d.y.toFixed(1)}%`,
-        `${d.sites} site${d.sites>1?'s':''}  |  $${d.budget.toLocaleString()}/site`
-      ];}}}},
+      tooltip:{
+        backgroundColor: '#0f1115',
+        titleFont: {family: "'Inter Tight'", weight: '600', size: 12},
+        bodyFont: {family: "'JetBrains Mono', monospace", size: 11},
+        padding: 12,
+        cornerRadius: 0,
+        callbacks:{label:(ctx)=>{const d=ctx.raw;return [
+          `${d.loc} — ${ctx.dataset.label}`,
+          `CAC: $${Math.round(d.x)}  |  Growth: ${d.y.toFixed(1)}%`,
+          `${d.sites} site${d.sites>1?'s':''}  |  $${d.budget.toLocaleString()}/site`
+        ];}}}},
     scales:{
-      x:{title:{display:true,text:'Historical CAC ($) — lower is better →'},min:70,max:200,reverse:true,grid:{color:'rgba(128,128,128,0.1)'}},
-      y:{title:{display:true,text:'% Growth 2024 vs 2023'},min:-10,max:70,grid:{color:'rgba(128,128,128,0.1)'},ticks:{callback:(v)=>v+'%'}}
+      x:{title:{display:true,text:'Historical CAC ($) — lower is better →', font:{family:"'JetBrains Mono', monospace", size: 10}, color: '#6c6a63'},min:70,max:200,reverse:true,grid:{color:'rgba(15,17,21,0.06)'}},
+      y:{title:{display:true,text:'% Growth 2024 vs 2023', font:{family:"'JetBrains Mono', monospace", size: 10}, color: '#6c6a63'},min:-10,max:70,grid:{color:'rgba(15,17,21,0.06)'},ticks:{callback:(v)=>v+'%'}}
     }}
 });
 
@@ -284,40 +778,53 @@ const catData = [
 new Chart(document.getElementById('catChart'),{
   type:'bar',
   data:{labels:catData.map(c=>c.cat),datasets:[
-    {label:'Avg 2018 weeks',data:catData.map(c=>c.avg_2018||null),backgroundColor:'#B4B2A9',borderRadius:4},
-    {label:'Avg 2024 weeks',data:catData.map(c=>c.avg_2024),backgroundColor:'#185FA5',borderRadius:4}
+    {label:'Avg 2018 weeks',data:catData.map(c=>c.avg_2018||null),backgroundColor:'#b8b3a3',borderRadius:0},
+    {label:'Avg 2024 weeks',data:catData.map(c=>c.avg_2024),backgroundColor:'#0f1115',borderRadius:0}
   ]},
   options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:(ctx)=>`${ctx.dataset.label}: ${ctx.raw?Math.round(ctx.raw).toLocaleString():'n/a'} weeks`}}},
+      tooltip:{
+        backgroundColor: '#0f1115',
+        titleFont: {family: "'Inter Tight'", weight: '600', size: 12},
+        bodyFont: {family: "'JetBrains Mono', monospace", size: 11},
+        padding: 12, cornerRadius: 0,
+        callbacks:{label:(ctx)=>`${ctx.dataset.label}: ${ctx.raw?Math.round(ctx.raw).toLocaleString():'n/a'} weeks`}}},
     scales:{x:{grid:{display:false}},
-      y:{title:{display:true,text:'Avg total weeks per site'},grid:{color:'rgba(128,128,128,0.1)'}}}}
+      y:{title:{display:true,text:'Avg total weeks per site', font:{family:"'JetBrains Mono', monospace", size: 10}, color: '#6c6a63'},grid:{color:'rgba(15,17,21,0.06)'}}}}
 });
 
 new Chart(document.getElementById('cacChart'),{
   type:'bar',
   data:{labels:catData.map(c=>c.cat),datasets:[{
     data:catData.map(c=>c.cac),
-    backgroundColor:catData.map(c=>colors[c.cat]),borderRadius:4
+    backgroundColor:catData.map(c=>colors[c.cat]),borderRadius:0
   }]},
   options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:(ctx)=>`$${Math.round(ctx.raw)}`}}},
+      tooltip:{
+        backgroundColor: '#0f1115',
+        bodyFont: {family: "'JetBrains Mono', monospace", size: 11},
+        padding: 10, cornerRadius: 0,
+        callbacks:{label:(ctx)=>`$${Math.round(ctx.raw)}`}}},
     scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
-      y:{ticks:{callback:(v)=>'$'+v},grid:{color:'rgba(128,128,128,0.1)'}}}}
+      y:{ticks:{callback:(v)=>'$'+v},grid:{color:'rgba(15,17,21,0.06)'}}}}
 });
 
 new Chart(document.getElementById('growthChart'),{
   type:'bar',
   data:{labels:catData.map(c=>c.cat),datasets:[{
     data:catData.map(c=>c.growth),
-    backgroundColor:catData.map(c=>c.growth<0?'#E24B4A':colors[c.cat]),borderRadius:4
+    backgroundColor:catData.map(c=>c.growth<0?'#a63a2a':colors[c.cat]),borderRadius:0
   }]},
   options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:(ctx)=>ctx.raw.toFixed(1)+'%'}}},
+      tooltip:{
+        backgroundColor: '#0f1115',
+        bodyFont: {family: "'JetBrains Mono', monospace", size: 11},
+        padding: 10, cornerRadius: 0,
+        callbacks:{label:(ctx)=>ctx.raw.toFixed(1)+'%'}}},
     scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
-      y:{ticks:{callback:(v)=>v+'%'},grid:{color:'rgba(128,128,128,0.1)'}}}}
+      y:{ticks:{callback:(v)=>v+'%'},grid:{color:'rgba(15,17,21,0.06)'}}}}
 });
 
 const reallocs = [
@@ -342,7 +849,7 @@ function rowHTML(r){
     <div><span class="tag ${r.action}">${tagText}</span></div>
     <div class="bucket-num"><div class="bucket-sub">old / site</div>${fmt(r.old)}</div>
     <div class="bucket-num"><div class="bucket-sub">new / site</div>${fmt(r.new_)}</div>
-    <div class="bucket-delta ${r.change>=0?'pos':'neg'}">${sign}${fmt(r.change)}<div class="bucket-sub" style="font-weight:400">${r.pct>=0?'+':''}${r.pct.toFixed(0)}% bucket</div></div>
+    <div class="bucket-delta ${r.change>=0?'pos':'neg'}">${sign}${fmt(r.change)}<div class="bucket-sub">${r.pct>=0?'+':''}${r.pct.toFixed(0)}% bucket</div></div>
   </div>`;
 }
 document.getElementById('donor-list').innerHTML = reallocs.filter(r=>r.action==='reduce').map(rowHTML).join('');
