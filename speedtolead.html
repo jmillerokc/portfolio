@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>2024 Company Case Study: Using data and narrative to illustrate GTM success</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1115;
+    --ink-soft: #2b2f3a;
+    --paper: #f7f5f0;
+    --paper-2: #efece4;
+    --rule: #d9d4c7;
+    --accent: #d4502a;
+    --accent-soft: #e8d6c8;
+    --green: #2f6d4f;
+    --muted: #6c6a63;
+    --max: 1180px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(15,17,21,0.025) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 32px;
+    max-width: var(--max);
+    margin: 0 auto;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+  }
+  .topbar .meta { display: flex; gap: 24px; }
+  .topbar .meta span::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-right: 8px;
+    transform: translateY(-2px);
+  }
+
+  /* Hero */
+  .hero {
+    padding: 90px 0 70px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(38px, 5.4vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 20px;
+    max-width: 22ch;
+  }
+  .hero .subhead {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+  .hero .lede {
+    max-width: 56ch;
+    font-size: 18px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* Scorecard */
+  .scorecard {
+    margin-top: 56px;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+  .scorecard-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
+    max-width: 50ch;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .hero-stats .stat {
+    padding: 24px 24px 24px 0;
+    border-right: 1px solid var(--rule);
+  }
+  .hero-stats .stat:last-child { border-right: none; padding-right: 0; }
+  .hero-stats .stat:not(:first-child) { padding-left: 24px; }
+  .hero-stats .stat .num {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .hero-stats .stat .num .arrow {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .hero-stats .stat .label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.4;
+  }
+
+  /* Sections */
+  section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    margin-bottom: 48px;
+    align-items: start;
+  }
+  .section-head .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 12px;
+    border-top: 2px solid var(--ink);
+  }
+  .section-head h2 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    margin: 0 0 16px;
+    max-width: 22ch;
+  }
+  .section-head p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+  }
+  .body-grid .side {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .body-grid .content > * + * { margin-top: 20px; }
+  .body-grid .content p { margin: 0; }
+
+  .body-grid h3 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.015em;
+    margin: 40px 0 12px;
+  }
+
+  ul.clean { list-style: none; padding: 0; margin: 0; }
+  ul.clean li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+  }
+  ul.clean li::before {
+    content: "→";
+    color: var(--accent);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  ul.clean li:last-child { border-bottom: none; }
+
+  /* Charts */
+  .chart-block {
+    background: #fff;
+    border: 1px solid var(--rule);
+    padding: 36px;
+    margin: 32px 0;
+    position: relative;
+  }
+  .chart-block::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 24px; height: 24px;
+    border-top: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+  }
+  .chart-block::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 24px; height: 24px;
+    border-bottom: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+  }
+  .chart-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .chart-heading {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin: 0 0 28px;
+  }
+
+  /* Speed-to-Lead distribution */
+  .stl-chart { display: flex; flex-direction: column; gap: 26px; }
+  .stl-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .stl-row .stl-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: right;
+    letter-spacing: 0.02em;
+  }
+  .stl-bars {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 6px;
+    height: 48px;
+  }
+  .stl-bar {
+    height: 21px;
+    position: relative;
+    background: var(--paper-2);
+  }
+  .stl-bar .fill {
+    height: 100%;
+    transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0;
+  }
+  .stl-bar.before .fill { background: linear-gradient(90deg, #b8b3a3, #8e8978); }
+  .stl-bar.after .fill { background: linear-gradient(90deg, var(--accent), #b53d1f); }
+
+  /* Value labels always sit OUTSIDE the bar to the right (in dark ink) */
+  .stl-bar .val {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.4s ease 1.0s, left 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    left: 6px;
+  }
+  .stl-bar.animate .fill { width: var(--w, 0%); }
+  .stl-bar.animate .val {
+    opacity: 1;
+    left: calc(var(--w, 0%) + 8px);
+  }
+
+  .stl-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stl-legend .swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    transform: translateY(2px);
+  }
+  .stl-legend .swatch.before { background: #8e8978; }
+  .stl-legend .swatch.after { background: var(--accent); }
+
+  /* Funnel */
+  .funnel {
+    display: grid;
+    grid-template-columns: 100px repeat(3, 1fr);
+    gap: 0;
+    margin-top: 8px;
+  }
+  .funnel .head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .funnel .head:first-child { border-bottom-color: transparent; }
+  .funnel .cell {
+    padding: 18px 16px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+  }
+  .funnel .cell.label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .funnel .cell .meter {
+    width: 100%;
+    height: 28px;
+    background: var(--paper-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .funnel .cell .meter .fill {
+    height: 100%;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .funnel .cell .meter .num {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .funnel .cell .meter.response .fill { background: var(--accent-soft); }
+  .funnel .cell .meter.opp .fill { background: #d4a574; }
+  .funnel .cell .meter.award .fill { background: var(--green); opacity: 0.8; }
+  .funnel.animate .meter .fill { width: var(--w, 0%); }
+
+  /* Lift */
+  .lift-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .lift-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .lift-row:last-child { border-bottom: none; }
+  .lift-row .name {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .lift-metric { display: flex; flex-direction: column; gap: 6px; }
+  .lift-metric .ml {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .lift-metric .bar-wrap { display: flex; align-items: center; gap: 12px; }
+  .lift-metric .bar {
+    flex: 1;
+    height: 10px;
+    background: var(--paper-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .lift-metric .bar .before-fill,
+  .lift-metric .bar .after-fill {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: width 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0;
+  }
+  .lift-metric .bar .before-fill { background: #c9c4b3; left: 0; }
+  .lift-metric .bar .after-fill { background: var(--accent); left: 0; }
+  .lift-metric.animate .before-fill { width: var(--wb, 0%); }
+  .lift-metric.animate .after-fill { width: var(--wa, 0%); }
+  .lift-metric .nums {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    min-width: 90px;
+    text-align: right;
+  }
+  .lift-metric .nums .delta {
+    color: var(--accent);
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  /* Insight */
+  .insight {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 56px;
+    margin: 48px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight::before {
+    content: "“";
+    position: absolute;
+    top: 12px;
+    left: 24px;
+    font-family: 'Fraunces', serif;
+    font-size: 110px;
+    color: var(--accent);
+    opacity: 0.3;
+    line-height: 1;
+  }
+  .insight .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .insight blockquote {
+    margin: 0;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(20px, 2.2vw, 26px);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    max-width: 36ch;
+  }
+
+  /* Diagnostic */
+  .diag {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    background: #fff;
+    margin: 32px 0;
+  }
+  .diag .col { padding: 32px; }
+  .diag .col + .col { border-left: 1px solid var(--rule); }
+  .diag .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    margin-bottom: 16px;
+  }
+  .diag .col.bad .tag { background: #f4e3dc; color: var(--accent); }
+  .diag .col.good .tag { background: #dde8e0; color: var(--green); }
+  .diag h4 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 12px;
+    letter-spacing: -0.015em;
+  }
+  .diag p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  /* Segmentation */
+  .seg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 28px 0;
+  }
+  .seg-card { background: #fff; padding: 24px; }
+  .seg-card .ix {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .seg-card h4 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 6px;
+    letter-spacing: -0.015em;
+  }
+  .seg-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  footer {
+    padding: 70px 0 50px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  footer .mark {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 880px) {
+    .topbar { padding: 20px 24px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .wrap { padding: 0 24px; }
+    .hero { padding: 50px 0 40px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-stats .stat { padding: 18px 14px !important; border-right: none !important; border-bottom: 1px solid var(--rule); }
+    .hero-stats .stat:nth-child(odd) { border-right: 1px solid var(--rule) !important; }
+    .hero-stats .stat:nth-last-child(-n+2) { border-bottom: none; }
+    section { padding: 56px 0; }
+    .section-head, .body-grid { grid-template-columns: 1fr; gap: 24px; }
+    .body-grid .side { display: none; }
+    .chart-block { padding: 24px 18px; }
+    .stl-row { grid-template-columns: 80px 1fr; gap: 14px; }
+    .stl-row .stl-label { font-size: 10px; }
+    .funnel { grid-template-columns: 80px repeat(3, 1fr); }
+    .funnel .head, .funnel .cell { padding: 12px 8px; font-size: 11px; }
+    .lift-row { grid-template-columns: 1fr; gap: 12px; }
+    .diag { grid-template-columns: 1fr; }
+    .diag .col + .col { border-left: none; border-top: 1px solid var(--rule); }
+    .insight { padding: 36px 24px; }
+    .seg-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>Case Study&nbsp;&nbsp;/&nbsp;&nbsp;Marketing Operations</div>
+  <div class="meta">
+    <span>B2B Revenue</span>
+    <span>Sales Alignment</span>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Case Study</div>
+    <h1>CRM Analysis to Identify Pipeline Leaks and Improve Sales Action</h1>
+    <div class="subhead">Presented at SKO and Global Retreat</div>
+    <p class="lede">As the company scaled, MQL-to-Opportunity conversion declined. Initial theories pointed to lead quality. The data told a different story, one about response time and contextual relevance.</p>
+
+    <div class="scorecard">
+      <h2 class="scorecard-title">Improved speed-to-lead with operational changes and personalized email sequencing led to:</h2>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num">12%<span class="arrow"> → </span>72%</div>
+          <div class="label">Leads contacted within 1 hour</div>
+        </div>
+        <div class="stat">
+          <div class="num">0%<span class="arrow"> → </span>43%</div>
+          <div class="label">Leads contacted under 5 minutes</div>
+        </div>
+        <div class="stat">
+          <div class="num">+26<span class="arrow">%</span></div>
+          <div class="label">Lift in opportunity rate</div>
+        </div>
+        <div class="stat">
+          <div class="num">+25<span class="arrow">%</span></div>
+          <div class="label">Lift in award rate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Section 1 -->
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">01 / Diagnosis</div>
+      <div>
+        <h2>Speed-to-lead as the growth lever.</h2>
+        <p>CRM timestamp analysis surfaced the real lever: how quickly sales reached out. Engagement and downstream outcomes both decayed sharply with delay.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Hypothesis<br>Validation</div>
+      <div class="content">
+        <div class="diag">
+          <div class="col bad">
+            <span class="tag">Before SLA</span>
+            <h4>Slow, scattered outreach</h4>
+            <p>40% of leads contacted after 24+ hours. Response rates fell from 41% to 21% to 12% as delay increased.</p>
+          </div>
+          <div class="col good">
+            <span class="tag">After SLA</span>
+            <h4>Aligned with peak intent</h4>
+            <p>72% contacted within 1 hour, 43% within 5 minutes. Sub-5-minute leads converted at 49% response, 31% opportunity, 19% award.</p>
+          </div>
+        </div>
+
+        <h3>Distribution shift after SLA implementation</h3>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 01 / SPEED-TO-CONTACT DISTRIBUTION</div>
+          <div class="chart-heading">Where the leads went, before and after</div>
+
+          <div class="stl-chart" id="stlChart"></div>
+
+          <div class="stl-legend">
+            <div><span class="swatch before"></span>Before SLA</div>
+            <div><span class="swatch after"></span>After SLA</div>
+          </div>
+        </div>
+
+        <h3>The downstream funnel by response time</h3>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 02 / CONVERSION BY SPEED-TO-CONTACT (POST-SLA)</div>
+          <div class="chart-heading">Earlier contact, materially better outcomes</div>
+
+          <div class="funnel" id="funnelChart">
+            <div class="head">Speed</div>
+            <div class="head">Response Rate</div>
+            <div class="head">Opp Rate</div>
+            <div class="head">Award Rate</div>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="label">Key Insight</div>
+          <blockquote>A simple sales enablement plan, paired with a light tech implementation for lead routing, made a measurable difference. Speed-to-lead drove higher engagement and more closed deals by aligning outreach with peak buyer intent.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Section 2 -->
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">02 / Compounding Issue</div>
+      <div>
+        <h2>Sequence engagement was suppressing pipeline impact.</h2>
+        <p>Initial assumptions blamed list quality or creative fatigue. Segmentation pointed somewhere else.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Channel<br>Diagnosis</div>
+      <div class="content">
+        <p>One-off campaigns met or exceeded benchmark. Automated sequence emails consistently underperformed on both open rate and CTR. The issue was not channel-wide, it was isolated to nurture sequences.</p>
+
+        <ul class="clean">
+          <li><span>Sequences relied on generic, non-contextual messaging.</span></li>
+          <li><span>No differentiation by industry or role.</span></li>
+          <li><span>Engagement declined as messaging became less relevant.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Section 3 -->
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">03 / Intervention</div>
+      <div>
+        <h2>Restructured sequences with contextual messaging.</h2>
+        <p>Each touchpoint was aligned to industry-specific challenges and role-specific decision drivers.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Personalization<br>Axes</div>
+      <div class="content">
+        <div class="seg-grid">
+          <div class="seg-card">
+            <div class="ix">Vertical · 01</div>
+            <h4>Healthcare</h4>
+            <p>Compliance-led use cases, clinical workflow context.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Vertical · 02</div>
+            <h4>Financial Services</h4>
+            <p>Risk, regulatory framing, operational scale.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Vertical · 03</div>
+            <h4>Education</h4>
+            <p>Stakeholder alignment, budget cycles, outcome metrics.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Vertical · 04</div>
+            <h4>Manufacturing</h4>
+            <p>Throughput, supply-chain visibility, uptime.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Seniority · 01</div>
+            <h4>Director</h4>
+            <p>Strategic priorities, cross-functional outcomes.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Seniority · 02</div>
+            <h4>Manager</h4>
+            <p>Team-level execution, day-to-day workflow gains.</p>
+          </div>
+        </div>
+
+        <h3>Open-rate and CTR lift, by vertical</h3>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 03 / PERFORMANCE LIFT BY INDUSTRY</div>
+          <div class="chart-heading">Vertical-specific messaging, vertical-specific results</div>
+
+          <div class="lift-grid" id="verticalChart"></div>
+        </div>
+
+        <h3>Open-rate and CTR lift, by seniority</h3>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 04 / PERFORMANCE LIFT BY ROLE</div>
+          <div class="chart-heading">Role-specific framing pays off most at the Director level</div>
+
+          <div class="lift-grid" id="seniorityChart"></div>
+        </div>
+
+        <div class="insight">
+          <div class="label">Takeaway</div>
+          <blockquote>The fix was not more volume or more channels, it was more relevance. Treating each recipient as a person with a specific industry context and role made every other GTM investment work harder.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="mark">A human-centric approach to GTM.</div>
+    <div>Case Study · Personal Portfolio · 2024</div>
+  </div>
+</footer>
+
+<script>
+  const stlData = [
+    { label: '< 5 min',    before: 0,    after: 0.43 },
+    { label: '5-60 min',   before: 0.05, after: 0.29 },
+    { label: '1-4 hrs',    before: 0.07, after: 0.14 },
+    { label: '4-24 hrs',   before: 0.48, after: 0.10 },
+    { label: '1-3 days',   before: 0.34, after: 0.03 },
+    { label: '3+ days',    before: 0.06, after: 0.01 },
+  ];
+
+  const funnelData = [
+    { label: '< 5 min',  response: 0.49, opp: 0.31, award: 0.19 },
+    { label: '5-60 min', response: 0.43, opp: 0.27, award: 0.16 },
+    { label: '1-4 hrs',  response: 0.42, opp: 0.25, award: 0.15 },
+    { label: '4-24 hrs', response: 0.43, opp: 0.23, award: 0.15 },
+    { label: '1-3 days', response: 0.29, opp: 0.17, award: 0.07 },
+    { label: '3+ days',  response: 0.12, opp: 0.12, award: 0.02 },
+  ];
+
+  const verticalData = [
+    { name: 'Healthcare',         openBefore: 18, openAfter: 26, openLift: 44, ctrBefore: 2.4, ctrAfter: 4.1, ctrLift: 71 },
+    { name: 'Financial Services', openBefore: 18, openAfter: 24, openLift: 33, ctrBefore: 2.4, ctrAfter: 3.8, ctrLift: 58 },
+    { name: 'Education',          openBefore: 18, openAfter: 22, openLift: 22, ctrBefore: 2.4, ctrAfter: 3.2, ctrLift: 33 },
+    { name: 'Manufacturing',      openBefore: 18, openAfter: 25, openLift: 39, ctrBefore: 2.4, ctrAfter: 3.9, ctrLift: 63 },
+  ];
+
+  const seniorityData = [
+    { name: 'Director', openBefore: 18, openAfter: 27, openLift: 50, ctrBefore: 2.4, ctrAfter: 4.3, ctrLift: 79 },
+    { name: 'Manager',  openBefore: 18, openAfter: 23, openLift: 28, ctrBefore: 2.4, ctrAfter: 3.4, ctrLift: 42 },
+  ];
+
+  // STL distribution
+  (function() {
+    const container = document.getElementById('stlChart');
+    const max = 0.55;
+    stlData.forEach(d => {
+      const wBefore = (d.before / max) * 100;
+      const wAfter = (d.after / max) * 100;
+      const row = document.createElement('div');
+      row.className = 'stl-row';
+      row.innerHTML = `
+        <div class="stl-label">${d.label}</div>
+        <div class="stl-bars">
+          <div class="stl-bar before" style="--w:${wBefore}%">
+            <div class="fill"></div>
+            <div class="val">${(d.before * 100).toFixed(0)}%</div>
+          </div>
+          <div class="stl-bar after" style="--w:${wAfter}%">
+            <div class="fill"></div>
+            <div class="val">${(d.after * 100).toFixed(0)}%</div>
+          </div>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+  })();
+
+  // Funnel
+  (function() {
+    const container = document.getElementById('funnelChart');
+    const maxR = 0.5, maxO = 0.4, maxA = 0.25;
+    funnelData.forEach(d => {
+      container.insertAdjacentHTML('beforeend', `
+        <div class="cell label">${d.label}</div>
+        <div class="cell"><div class="meter response" style="--w:${(d.response/maxR)*100}%"><div class="fill"></div><div class="num">${(d.response*100).toFixed(0)}%</div></div></div>
+        <div class="cell"><div class="meter opp" style="--w:${(d.opp/maxO)*100}%"><div class="fill"></div><div class="num">${(d.opp*100).toFixed(0)}%</div></div></div>
+        <div class="cell"><div class="meter award" style="--w:${(d.award/maxA)*100}%"><div class="fill"></div><div class="num">${(d.award*100).toFixed(1).replace('.0','')}%</div></div></div>
+      `);
+    });
+  })();
+
+  function renderLift(containerId, data, openMax = 30, ctrMax = 5) {
+    const container = document.getElementById(containerId);
+    data.forEach(d => {
+      const row = document.createElement('div');
+      row.className = 'lift-row';
+      row.innerHTML = `
+        <div class="name">${d.name}</div>
+        <div class="lift-metric">
+          <div class="ml">Open Rate</div>
+          <div class="bar-wrap">
+            <div class="bar" style="--wb:${(d.openBefore/openMax)*100}%; --wa:${(d.openAfter/openMax)*100}%">
+              <div class="before-fill"></div>
+              <div class="after-fill"></div>
+            </div>
+            <div class="nums">${d.openBefore}% → ${d.openAfter}%<span class="delta">+${d.openLift}%</span></div>
+          </div>
+        </div>
+        <div class="lift-metric">
+          <div class="ml">CTR</div>
+          <div class="bar-wrap">
+            <div class="bar" style="--wb:${(d.ctrBefore/ctrMax)*100}%; --wa:${(d.ctrAfter/ctrMax)*100}%">
+              <div class="before-fill"></div>
+              <div class="after-fill"></div>
+            </div>
+            <div class="nums">${d.ctrBefore}% → ${d.ctrAfter}%<span class="delta">+${d.ctrLift}%</span></div>
+          </div>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+  }
+  renderLift('verticalChart', verticalData);
+  renderLift('seniorityChart', seniorityData);
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        el.querySelectorAll('.stl-bar').forEach((b, i) => {
+          setTimeout(() => b.classList.add('animate'), i * 60);
+        });
+        if (el.classList.contains('funnel')) el.classList.add('animate');
+        el.querySelectorAll('.lift-metric').forEach((b, i) => {
+          setTimeout(() => b.classList.add('animate'), i * 80);
+        });
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('#stlChart, #funnelChart, #verticalChart, #seniorityChart').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
