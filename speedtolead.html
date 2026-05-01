@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>2024 Company Case Study: Using data and narrative to illustrate GTM success</title>
+<title>Case Study: Speed-to-Lead Optimization</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -71,8 +72,8 @@
     position: relative;
     z-index: 2;
   }
-  .topbar .meta { display: flex; gap: 24px; }
-  .topbar .meta span::before {
+  .topbar .meta { display: flex; gap: 24px; align-items: center; }
+  .topbar .meta span.tag::before {
     content: "";
     display: inline-block;
     width: 6px;
@@ -81,6 +82,38 @@
     border-radius: 50%;
     margin-right: 8px;
     transform: translateY(-2px);
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    transition: gap 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.35s ease,
+                border-color 0.35s ease,
+                background 0.35s ease;
+  }
+  .back-link .arrow {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .back-link:hover {
+    gap: 14px;
+    color: var(--accent);
+    border-color: var(--ink);
+    background: #fff;
+  }
+  .back-link:hover .arrow {
+    transform: translateX(-4px);
   }
 
   /* Hero */
@@ -632,10 +665,10 @@
 
 <header class="topbar">
   <div>Case Study&nbsp;&nbsp;/&nbsp;&nbsp;Marketing Operations</div>
-  <div class="meta">
-    <span>B2B Revenue</span>
-    <span>Sales Alignment</span>
-  </div>
+  <a class="back-link" href="https://jmillerokc.github.io/portfolio/">
+    <span class="arrow">←</span>
+    <span>Take me back</span>
+  </a>
 </header>
 
 <!-- Hero -->
@@ -644,10 +677,10 @@
     <div class="eyebrow">Case Study</div>
     <h1>CRM Analysis to Identify Pipeline Leaks and Improve Sales Action</h1>
     <div class="subhead">Presented at SKO and Global Retreat</div>
-    <p class="lede">As the company scaled, MQL-to-Opportunity conversion declined. Initial theories pointed to lead quality. The data told a different story, one about response time and contextual relevance.</p>
+    <p class="lede">As the company scaled, MQL-to-Opportunity conversion declined. Initial theories pointed to lead quality. CRM timestamp analysis told a different story, the lever was response time, and a light operational fix moved the numbers materially.</p>
 
     <div class="scorecard">
-      <h2 class="scorecard-title">Improved speed-to-lead with operational changes and personalized email sequencing led to:</h2>
+      <h2 class="scorecard-title">Implementing speed-to-lead with operational changes and lead routing led to:</h2>
       <div class="hero-stats">
         <div class="stat">
           <div class="num">12%<span class="arrow"> → </span>72%</div>
@@ -734,106 +767,6 @@
   </section>
 </div>
 
-<!-- Section 2 -->
-<div class="wrap">
-  <section>
-    <div class="section-head">
-      <div class="num">02 / Compounding Issue</div>
-      <div>
-        <h2>Sequence engagement was suppressing pipeline impact.</h2>
-        <p>Initial assumptions blamed list quality or creative fatigue. Segmentation pointed somewhere else.</p>
-      </div>
-    </div>
-
-    <div class="body-grid">
-      <div class="side">Channel<br>Diagnosis</div>
-      <div class="content">
-        <p>One-off campaigns met or exceeded benchmark. Automated sequence emails consistently underperformed on both open rate and CTR. The issue was not channel-wide, it was isolated to nurture sequences.</p>
-
-        <ul class="clean">
-          <li><span>Sequences relied on generic, non-contextual messaging.</span></li>
-          <li><span>No differentiation by industry or role.</span></li>
-          <li><span>Engagement declined as messaging became less relevant.</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- Section 3 -->
-<div class="wrap">
-  <section>
-    <div class="section-head">
-      <div class="num">03 / Intervention</div>
-      <div>
-        <h2>Restructured sequences with contextual messaging.</h2>
-        <p>Each touchpoint was aligned to industry-specific challenges and role-specific decision drivers.</p>
-      </div>
-    </div>
-
-    <div class="body-grid">
-      <div class="side">Personalization<br>Axes</div>
-      <div class="content">
-        <div class="seg-grid">
-          <div class="seg-card">
-            <div class="ix">Vertical · 01</div>
-            <h4>Healthcare</h4>
-            <p>Compliance-led use cases, clinical workflow context.</p>
-          </div>
-          <div class="seg-card">
-            <div class="ix">Vertical · 02</div>
-            <h4>Financial Services</h4>
-            <p>Risk, regulatory framing, operational scale.</p>
-          </div>
-          <div class="seg-card">
-            <div class="ix">Vertical · 03</div>
-            <h4>Education</h4>
-            <p>Stakeholder alignment, budget cycles, outcome metrics.</p>
-          </div>
-          <div class="seg-card">
-            <div class="ix">Vertical · 04</div>
-            <h4>Manufacturing</h4>
-            <p>Throughput, supply-chain visibility, uptime.</p>
-          </div>
-          <div class="seg-card">
-            <div class="ix">Seniority · 01</div>
-            <h4>Director</h4>
-            <p>Strategic priorities, cross-functional outcomes.</p>
-          </div>
-          <div class="seg-card">
-            <div class="ix">Seniority · 02</div>
-            <h4>Manager</h4>
-            <p>Team-level execution, day-to-day workflow gains.</p>
-          </div>
-        </div>
-
-        <h3>Open-rate and CTR lift, by vertical</h3>
-
-        <div class="chart-block">
-          <div class="chart-title">FIG. 03 / PERFORMANCE LIFT BY INDUSTRY</div>
-          <div class="chart-heading">Vertical-specific messaging, vertical-specific results</div>
-
-          <div class="lift-grid" id="verticalChart"></div>
-        </div>
-
-        <h3>Open-rate and CTR lift, by seniority</h3>
-
-        <div class="chart-block">
-          <div class="chart-title">FIG. 04 / PERFORMANCE LIFT BY ROLE</div>
-          <div class="chart-heading">Role-specific framing pays off most at the Director level</div>
-
-          <div class="lift-grid" id="seniorityChart"></div>
-        </div>
-
-        <div class="insight">
-          <div class="label">Takeaway</div>
-          <blockquote>The fix was not more volume or more channels, it was more relevance. Treating each recipient as a person with a specific industry context and role made every other GTM investment work harder.</blockquote>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
-
 <footer>
   <div class="wrap">
     <div class="mark">A human-centric approach to GTM.</div>
@@ -860,17 +793,6 @@
     { label: '3+ days',  response: 0.12, opp: 0.12, award: 0.02 },
   ];
 
-  const verticalData = [
-    { name: 'Healthcare',         openBefore: 18, openAfter: 26, openLift: 44, ctrBefore: 2.4, ctrAfter: 4.1, ctrLift: 71 },
-    { name: 'Financial Services', openBefore: 18, openAfter: 24, openLift: 33, ctrBefore: 2.4, ctrAfter: 3.8, ctrLift: 58 },
-    { name: 'Education',          openBefore: 18, openAfter: 22, openLift: 22, ctrBefore: 2.4, ctrAfter: 3.2, ctrLift: 33 },
-    { name: 'Manufacturing',      openBefore: 18, openAfter: 25, openLift: 39, ctrBefore: 2.4, ctrAfter: 3.9, ctrLift: 63 },
-  ];
-
-  const seniorityData = [
-    { name: 'Director', openBefore: 18, openAfter: 27, openLift: 50, ctrBefore: 2.4, ctrAfter: 4.3, ctrLift: 79 },
-    { name: 'Manager',  openBefore: 18, openAfter: 23, openLift: 28, ctrBefore: 2.4, ctrAfter: 3.4, ctrLift: 42 },
-  ];
 
   // STL distribution
   (function() {
@@ -912,40 +834,6 @@
     });
   })();
 
-  function renderLift(containerId, data, openMax = 30, ctrMax = 5) {
-    const container = document.getElementById(containerId);
-    data.forEach(d => {
-      const row = document.createElement('div');
-      row.className = 'lift-row';
-      row.innerHTML = `
-        <div class="name">${d.name}</div>
-        <div class="lift-metric">
-          <div class="ml">Open Rate</div>
-          <div class="bar-wrap">
-            <div class="bar" style="--wb:${(d.openBefore/openMax)*100}%; --wa:${(d.openAfter/openMax)*100}%">
-              <div class="before-fill"></div>
-              <div class="after-fill"></div>
-            </div>
-            <div class="nums">${d.openBefore}% → ${d.openAfter}%<span class="delta">+${d.openLift}%</span></div>
-          </div>
-        </div>
-        <div class="lift-metric">
-          <div class="ml">CTR</div>
-          <div class="bar-wrap">
-            <div class="bar" style="--wb:${(d.ctrBefore/ctrMax)*100}%; --wa:${(d.ctrAfter/ctrMax)*100}%">
-              <div class="before-fill"></div>
-              <div class="after-fill"></div>
-            </div>
-            <div class="nums">${d.ctrBefore}% → ${d.ctrAfter}%<span class="delta">+${d.ctrLift}%</span></div>
-          </div>
-        </div>
-      `;
-      container.appendChild(row);
-    });
-  }
-  renderLift('verticalChart', verticalData);
-  renderLift('seniorityChart', seniorityData);
-
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -954,15 +842,12 @@
           setTimeout(() => b.classList.add('animate'), i * 60);
         });
         if (el.classList.contains('funnel')) el.classList.add('animate');
-        el.querySelectorAll('.lift-metric').forEach((b, i) => {
-          setTimeout(() => b.classList.add('animate'), i * 80);
-        });
         io.unobserve(el);
       }
     });
   }, { threshold: 0.15 });
 
-  document.querySelectorAll('#stlChart, #funnelChart, #verticalChart, #seniorityChart').forEach(el => io.observe(el));
+  document.querySelectorAll('#stlChart, #funnelChart').forEach(el => io.observe(el));
 </script>
 
 </body>
