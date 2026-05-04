@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Same demand. Different math. / Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f1115;
+  --ink-soft: #2b2f3a;
+  --paper: #f7f5f0;
+  --paper-2: #efece4;
+  --rule: #d9d4c7;
+  --accent: #d4502a;
+  --accent-soft: #e8d6c8;
+  --green: #2f6d4f;
+  --muted: #6c6a63;
+  --max: 1180px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(15,17,21,0.025) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 32px;
+  max-width: var(--max);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  transition: gap 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.35s ease,
+              border-color 0.35s ease,
+              background 0.35s ease;
+}
+.back-link .arrow {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.back-link:hover {
+  gap: 14px;
+  color: var(--accent);
+  border-color: var(--ink);
+  background: #fff;
+}
+.back-link:hover .arrow {
+  transform: translateX(-4px);
+}
+
+/* Hero */
+.hero {
+  padding: 90px 0 70px;
+  border-bottom: 1px solid var(--rule);
+}
+.hero .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero .eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+.hero h1 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: clamp(38px, 5.4vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 20px;
+  max-width: 22ch;
+}
+.hero h1 em {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+.hero .subhead {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+.hero .lede {
+  max-width: 56ch;
+  font-size: 18px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.scorecard {
+  margin-top: 56px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.scorecard-title {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0 0 24px;
+  max-width: 50ch;
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+.hero-stats .stat {
+  padding: 24px 24px 24px 0;
+  border-right: 1px solid var(--rule);
+}
+.hero-stats .stat:last-child { border-right: none; padding-right: 0; }
+.hero-stats .stat:not(:first-child) { padding-left: 24px; }
+.hero-stats .stat .num {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+.hero-stats .stat .num .arrow {
+  color: var(--accent);
+  font-weight: 500;
+}
+.hero-stats .stat .label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+/* Sections */
+section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.section-head {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 60px;
+  margin-bottom: 48px;
+  align-items: start;
+}
+.section-head .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 12px;
+  border-top: 2px solid var(--ink);
+}
+.section-head h2 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: clamp(30px, 3.6vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 0 0 16px;
+  max-width: 22ch;
+}
+.section-head p {
+  font-size: 17px;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 60ch;
+}
+.body-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 60px;
+}
+.body-grid .side {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.body-grid .content > * + * { margin-top: 20px; }
+.body-grid .content p { margin: 0; }
+.body-grid h3 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.015em;
+  margin: 40px 0 12px;
+}
+
+/* Chart block */
+.chart-block {
+  background: #fff;
+  border: 1px solid var(--rule);
+  padding: 36px;
+  margin: 32px 0;
+  position: relative;
+}
+.chart-block::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 24px; height: 24px;
+  border-top: 2px solid var(--ink);
+  border-left: 2px solid var(--ink);
+}
+.chart-block::after {
+  content: "";
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 24px; height: 24px;
+  border-bottom: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+}
+.chart-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.chart-heading {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 28px;
+}
+.chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chart-legend .swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.chart-foot {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+
+/* HTML bar chart for handoff comparison */
+.lift-chart { display: flex; flex-direction: column; gap: 14px; margin-top: 8px;}
+.lift-row { display: grid; grid-template-columns: 220px 1fr 90px; gap: 18px; align-items: center; }
+.lift-row .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.lift-row .bar-wrap {
+  background: var(--paper-2);
+  height: 18px;
+  position: relative;
+  border: 1px solid var(--rule);
+}
+.lift-row .bar { background: var(--accent); height: 100%; }
+.lift-row .bar.pos { background: var(--green); }
+.lift-row .bar.neg { background: #8a3a26; }
+.lift-row .bar.gray { background: #c9c4b3; }
+.lift-row .val {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+/* Insight block */
+.insight {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 48px 56px;
+  margin: 48px 0;
+  position: relative;
+  overflow: hidden;
+}
+.insight::before {
+  content: "\201C";
+  position: absolute;
+  top: 12px;
+  left: 24px;
+  font-family: 'Fraunces', serif;
+  font-size: 110px;
+  color: var(--accent);
+  opacity: 0.3;
+  line-height: 1;
+}
+.insight .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.insight blockquote {
+  margin: 0;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  max-width: 36ch;
+}
+
+/* Metric row */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0;
+  margin: 0 0 24px;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+.metric { padding: 20px 22px; border-right: 1px solid var(--rule); }
+.metric:last-child { border-right: none; }
+.metric-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.metric-val {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Clean list */
+ul.clean { list-style: none; padding: 0; margin: 0; }
+ul.clean li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+}
+ul.clean li::before {
+  content: "\2192";
+  color: var(--accent);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+ul.clean li:last-child { border-bottom: none; }
+
+/* Diag two-column */
+.diag {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule);
+  background: #fff;
+  margin: 32px 0;
+}
+.diag .col { padding: 32px; }
+.diag .col + .col { border-left: 1px solid var(--rule); }
+.diag .tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  margin-bottom: 16px;
+}
+.diag .col.bad .tag { background: #f4e3dc; color: var(--accent); }
+.diag .col.good .tag { background: #dde8e0; color: var(--green); }
+.diag h4 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0 0 12px;
+  letter-spacing: -0.015em;
+}
+.diag p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+/* Segment grid */
+.seg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 28px 0;
+}
+.seg-card { background: #fff; padding: 24px; }
+.seg-card .ix {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.seg-card h4 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  margin: 0 0 6px;
+  letter-spacing: -0.015em;
+}
+.seg-card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Footer */
+footer {
+  padding: 70px 0 50px;
+  text-align: center;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+footer .mark {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: -0.025em;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 880px) {
+  .topbar { padding: 20px 24px; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .wrap { padding: 0 24px; }
+  .hero { padding: 50px 0 40px; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .hero-stats .stat { padding: 18px 14px !important; border-right: none !important; border-bottom: 1px solid var(--rule); }
+  .hero-stats .stat:nth-child(odd) { border-right: 1px solid var(--rule) !important; }
+  .hero-stats .stat:nth-last-child(-n+2) { border-bottom: none; }
+  section { padding: 56px 0; }
+  .section-head, .body-grid { grid-template-columns: 1fr; gap: 24px; }
+  .body-grid .side { display: none; }
+  .chart-block { padding: 24px 18px; }
+  .insight { padding: 36px 24px; }
+  .seg-grid { grid-template-columns: 1fr; }
+  .diag { grid-template-columns: 1fr; }
+  .diag .col + .col { border-left: none; border-top: 1px solid var(--rule); }
+  .metric-row { grid-template-columns: repeat(2, 1fr); }
+  .metric { border-right: none; border-bottom: 1px solid var(--rule); }
+  .metric:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .metric:nth-last-child(-n+2) { border-bottom: none; }
+  .lift-row { grid-template-columns: 1fr; gap: 6px; }
+  .lift-row .val { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>Case Study&nbsp;&nbsp;/&nbsp;&nbsp;Marketing Analytics</div>
+  <a class="back-link" href="https://jmillerokc.github.io/portfolio/">
+    <span class="arrow">&larr;</span>
+    <span>Take me back</span>
+  </a>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Case Study</div>
+    <h1>Same demand. <em>Different</em> math.</h1>
+    <div class="subhead">Audit of a multi-brand pipeline that quietly stopped working</div>
+    <p class="lede">Two sister brands ran on the same shared CRM and the same shared sales motion. The leadership team was right that pipeline quality had dropped, but the obvious answer (we need more leads) was the wrong fix. Volume held. The pipeline thinned because the channel mix shifted, the auction math changed, and the CRM stopped recording the difference between a ghost and a no.</p>
+
+    <div class="scorecard">
+      <h2 class="scorecard-title">Eight thousand leads, thirty-nine months, two ad accounts. The signal was downstream of where the team was looking.</h2>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num">8,558<span class="arrow"></span></div>
+          <div class="label">Records analyzed across both brands</div>
+        </div>
+        <div class="stat">
+          <div class="num">21<span class="arrow">% &rarr; 15%</span></div>
+          <div class="label">Senior pipeline handoff rate baseline vs. now</div>
+        </div>
+        <div class="stat">
+          <div class="num">3.5<span class="arrow">&times;</span></div>
+          <div class="label">Cost per click on non-brand search since 2024</div>
+        </div>
+        <div class="stat">
+          <div class="num">35<span class="arrow">%</span></div>
+          <div class="label">Of paid budget spent in zero-conversion regions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">01 / Discovery</div>
+      <div>
+        <h2>The complaint was real. The framing was wrong.</h2>
+        <p>The client felt lead quality had dropped. The instinct was to push for more spend at the top of the funnel. Three quarters of inquiry data said something different.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Where the<br>signal lives</div>
+      <div class="content">
+        <p>The pipeline runs through two stages. A first-touch rep handles every new inquiry. Anything that passes a fit and qualification threshold is handed to a senior closer who runs the deeper sales motion. Of the leads that ever advance past first contact, ninety-eight percent end up owned by that senior closer. So the percentage of leads that get to him is not a vanity metric. It is the operational definition of a sales-qualified opportunity for this business.</p>
+        <p>Plotted by quarter, that handoff rate sat in a tight band between twenty and twenty-three percent for two consecutive years. Then it broke.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 01 / Discovery</div>
+          <div class="chart-heading">A two-year pattern, then a step change in early 2025.</div>
+          <div class="chart-canvas-wrap"><canvas id="ch-handoff" role="img" aria-label="Quarterly handoff rate to senior closer, 2023 Q1 through 2026 Q1, dropping from low-twenties to mid-teens after Q1 2025"></canvas></div>
+          <div class="chart-foot">Source: shared CRM, n = 8,558 inquiries. Handoff = lead reached or passed qualification meeting stage.</div>
+        </div>
+
+        <p>What made this hard to see in the moment: total inquiry volume in the same window was almost identical to the prior year. Five hundred to five hundred fifty leads per quarter, then and now. The team was looking at the lead count and concluding the funnel was healthy. The ratio inside the funnel was the metric that had moved.</p>
+
+        <div class="insight">
+          <div class="label">The Pattern</div>
+          <blockquote>Same lead volume. Two-thirds the qualified handoffs. The funnel narrowed where nobody was watching.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">02 / Diagnosis</div>
+      <div>
+        <h2>Three things were happening at once.</h2>
+        <p>The mix of channels feeding the pipeline shifted. A high-converting partner channel went dormant. And the CRM lost the ability to tell a non-responsive lead from a disqualified one.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">What broke<br>and where</div>
+      <div class="content">
+        <p>Splitting the inquiry data by source category produced a clean view. Per-channel conversion to senior pipeline stayed in the same neighborhood within each channel. What changed was how much each channel contributed to total volume. The cheapest, lowest-converting channel grew. The two best-converting channels shrank. The handoff rate moved with the mix.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 02 / Diagnosis</div>
+          <div class="chart-heading">Channel effectiveness is dramatically uneven, and the mix tilted toward the lowest converter.</div>
+          <div class="chart-legend">
+            <span><span class="swatch" style="background:#d4502a;"></span>Senior pipeline rate</span>
+            <span><span class="swatch" style="background:#c9c4b3;"></span>Share of total leads</span>
+          </div>
+          <div class="chart-canvas-wrap" style="height:340px;"><canvas id="ch-channel" role="img" aria-label="Bar chart of channel effectiveness, partner channel converts 77 percent but is only 2 percent of mix, paid social converts under 10 percent and is over half the mix"></canvas></div>
+          <div class="chart-foot">Source: shared CRM source tags, current cohort. Senior pipeline rate = % of leads from that source that reached the qualification meeting stage.</div>
+        </div>
+
+        <p>The partner channel was the most striking finding. A small number of referral relationships had historically produced a handful of inquiries per quarter at a near-perfect handoff rate. Inside the analysis window, partner volume fell roughly fifty percent and one specific high-converting relationship effectively went dark. Recovering that channel alone, at its prior level, would close most of the gap to baseline without a single change to ad spend.</p>
+
+        <h3>The CRM was hiding the second half of the story.</h3>
+
+        <p>When a lead dies, the team marks it dead. The CRM offers a Lead Reason field for why. In the most recent twelve months, half of dead leads had been tagged with a single catch-all reason. Twenty-four percent had no reason at all. A second field that should record the stage at which the lead died had not been populated on a single record. The functional result is that there is no way, today, to distinguish a lead that was contacted, qualified, and declined from a lead that simply never responded. The two paths look identical in reporting.</p>
+
+        <p>That distinction matters because the fixes are completely different. Non-responders are a top-of-funnel pacing problem. Disqualified leads are a targeting or sales-process problem. Without the field discipline to tell them apart, the team cannot diagnose its own funnel.</p>
+
+        <div class="diag">
+          <div class="col bad">
+            <span class="tag">Today</span>
+            <h4>Single bucket for everything that died.</h4>
+            <p>Half of dead leads carry the same vague reason. A quarter carry no reason at all. The "stage at killed" field is empty on every record.</p>
+          </div>
+          <div class="col good">
+            <span class="tag">Required</span>
+            <h4>Structured outcome plus stage.</h4>
+            <p>Required picklist for outcome (No Response, Disqualified Financial, Disqualified Geographic, Withdrew). Required field for the stage the lead was in at death. Free-text comments stay; they are the audit trail, not the data.</p>
+          </div>
+        </div>
+
+        <h3>And the paid search account was inflating quietly.</h3>
+
+        <p>Same total spend in 2025 as 2024. Roughly half the clicks. That single sentence is what made the third part of the diagnosis necessary, and it is where most of the recoverable money sits.</p>
+
+        <div class="insight">
+          <div class="label">The Real Question</div>
+          <blockquote>Same money, half the clicks. Where did the difference go, and why did Quality Score show no decline at all?</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">03 / Intervention</div>
+      <div>
+        <h2>The auction changed underneath them.</h2>
+        <p>Quality Score had not declined. Bids had. Splitting the account into Brand and Non-Brand showed where the entire CPC inflation actually lived.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Where the<br>money went</div>
+      <div class="content">
+        <p>Both ad accounts showed the same surface pattern: spend roughly flat year over year, click volume cut in half, blended cost per click that looked like it had doubled. Disaggregating by campaign type produced a much sharper picture. Brand-search CPC stayed essentially flat. The cost per click on Non-Brand search had tripled on Account A and risen eighty-five percent on Account B. The "blended CPC doubled" framing was a composition effect: the cheap Non-Brand clicks that used to drag the average down had largely disappeared.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 03 / Intervention</div>
+          <div class="chart-heading">CPC inflation lives almost entirely on Non-Brand. Brand campaigns barely moved.</div>
+          <div class="chart-legend">
+            <span><span class="swatch" style="background:#c9c4b3;"></span>Baseline year</span>
+            <span><span class="swatch" style="background:#d4502a;"></span>Current cohort</span>
+          </div>
+          <div class="chart-canvas-wrap" style="height:340px;"><canvas id="ch-cpc" role="img" aria-label="Bar chart of CPC by campaign type, brand campaigns roughly flat, non-brand campaigns up 85 to 256 percent"></canvas></div>
+          <div class="chart-foot">Source: paid search exports, Account A and Account B. Baseline = full prior year. Current = trailing four quarters at audit.</div>
+        </div>
+
+        <h3>The Quality Score data ruled out the obvious explanation.</h3>
+
+        <p>If CPC inflated, the textbook first guess is that ad relevance fell and Google began charging more for the same auction position. The Quality Score export refused that story. The Non-Brand campaigns had been running at the floor of the Quality Score scale for twenty-seven consecutive months. The campaigns weren't getting worse. They had always been mediocre. What changed was that the same mediocre auction position now cost three times as much to occupy.</p>
+
+        <p>That signature is consistent with one of two things, both of which we surfaced as the priority questions to take to the agency. A bid-strategy switch to a conversion-optimized algorithm with too little signal to learn from. Or a match-type and close-variant expansion that pulled the same low-quality keywords into wider, more competitive auctions. The two are not mutually exclusive.</p>
+
+        <div class="metric-row">
+          <div class="metric"><div class="metric-label">Brand QS, current</div><div class="metric-val">9.2</div></div>
+          <div class="metric"><div class="metric-label">Non-brand QS, current</div><div class="metric-val">2.0</div></div>
+          <div class="metric"><div class="metric-label">Months at QS floor</div><div class="metric-val">27</div></div>
+          <div class="metric"><div class="metric-label">Lost impressions to rank</div><div class="metric-val">60-80%</div></div>
+        </div>
+
+        <h3>Geographic targeting drifted in opposite directions on the two accounts.</h3>
+
+        <p>One account got tighter. It was running in roughly two hundred ten regions in the baseline year and dropped to one hundred sixty-nine in the current cohort. Some of the removed regions were defensible cuts. Others were major metros where the brand has known sales territory available. Either way, a meaningful chunk of the remaining budget was sitting in regions that had produced zero conversions in the entire current year. Thirty-five percent of the account's spend in the trailing four quarters went to regions with zero qualified leads attributed.</p>
+
+        <p>The other account expanded sharply. A campaign that had run in seventy-two carefully selected regions for three consecutive quarters of the baseline year suddenly opened up to one hundred seventy regions in Q4 of that year and never tightened back. The new regions included rural and low-population markets that fall outside the brand's actual development territory. The expansion was almost certainly an attempt to recover volume during a budget shortfall in late 2024, and the configuration outlived the conditions that produced it.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 04 / Intervention</div>
+          <div class="chart-heading">Two accounts. Opposite geographic drift. Both producing waste.</div>
+          <div class="chart-canvas-wrap" style="height:280px;"><canvas id="ch-geo" role="img" aria-label="Horizontal bar chart, account A regions tightened from 210 to 169, account B regions expanded from 72 to 170"></canvas></div>
+          <div class="chart-foot">Source: campaign-level region match data. Region count = unique designated market areas receiving impressions in the period.</div>
+        </div>
+
+        <div class="insight">
+          <div class="label">The Lever</div>
+          <blockquote>Quality Score didn't change. Bidding changed. The same auction position now costs three times as much, and the same regions produce nothing.</blockquote>
+        </div>
+
+        <h3>What this resolves to.</h3>
+
+        <p>The intervention list separates work that pays back inside a quarter from work that resets the underlying system. The first list is short and concrete.</p>
+
+        <ul class="clean">
+          <li><span>Cut spend in regions with zero conversions in the trailing twelve months. The cleanest single line item, with roughly a fifth of total paid budget on the table.</span></li>
+          <li><span>Add a comprehensive negative-keyword library on Non-Brand search. The top intent-disqualifying queries are visible in the search-term data and can be applied as exact-match negatives the same day.</span></li>
+          <li><span>Restore the wider account's Non-Brand campaign to its original curated region list, rather than the expanded version that was never tightened back.</span></li>
+          <li><span>Reactivate the dormant partner channel. The original relationship still exists; the volume does not.</span></li>
+        </ul>
+
+        <p>The systemic work is harder and slower. Restructure the dead-lead taxonomy in the CRM so non-responders are distinguishable from disqualified leads. Pull the bid-strategy change history from the agency to confirm what shifted in early 2025. Rebuild the Non-Brand search campaigns with tighter match types and ad copy that actually addresses the buyer's question, since the current keyword and ad set has been operating at the bottom of the Quality Score scale for over two years.</p>
+
+        <div class="seg-grid">
+          <div class="seg-card">
+            <div class="ix">Action &middot; 01</div>
+            <h4>Cut zero-conversion regions</h4>
+            <p>Reclaim ~$28K of misallocated spend in geos that produced no qualified leads in the trailing year.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Action &middot; 02</div>
+            <h4>Negative-keyword cleanup</h4>
+            <p>Apply intent-disqualifying terms as exact-match negatives across Non-Brand on both accounts.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Action &middot; 03</div>
+            <h4>Restore partner channel</h4>
+            <p>Reactivate the dormant referral relationship that historically produced near-perfect conversion.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">Action &middot; 04</div>
+            <h4>Rebuild dead-lead taxonomy</h4>
+            <p>Required outcome and stage fields, so the CRM can distinguish a ghost from a no.</p>
+          </div>
+        </div>
+
+        <p>The argument that came out of this work was not "you have a Google Ads problem." It was that demand was largely intact, the funnel had been quietly broken in three different places, and the team had been looking at the wrong number for nine months. The first three quick wins are visible in the data. The fourth, the CRM rework, is what makes the next audit possible.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="mark">The volume was fine. The bidding wasn't.</div>
+    <div>Case Study &middot; Personal Portfolio &middot; 2025</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+Chart.defaults.font.family = "'Inter Tight', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#6c6a63';
+
+const tt = {
+  backgroundColor: '#0f1115',
+  titleFont: {family: "'Inter Tight'", weight: '600', size: 12},
+  bodyFont: {family: "'JetBrains Mono', monospace", size: 11},
+  padding: 12,
+  cornerRadius: 0,
+  displayColors: false
+};
+const grid = { color: 'rgba(15,17,21,0.06)', drawBorder: false };
+const axisTitle = (text) => ({
+  display: true,
+  text: text,
+  font: { family: "'JetBrains Mono', monospace", size: 10 },
+  color: '#6c6a63'
+});
+
+// ============ FIG 01 / Handoff rate by quarter ============
+const handoffLabels = [
+  '2023 Q1','2023 Q2','2023 Q3','2023 Q4',
+  '2024 Q1','2024 Q2','2024 Q3','2024 Q4',
+  '2025 Q1','2025 Q2','2025 Q3','2025 Q4',
+  '2026 Q1'
+];
+const handoffData = [20.5, 20.9, 20.6, 22.3, 19.2, 23.1, 23.5, 21.4, 11.3, 8.8, 15.0, 15.0, 14.8];
+
+new Chart(document.getElementById('ch-handoff'), {
+  type: 'line',
+  data: {
+    labels: handoffLabels,
+    datasets: [{
+      label: 'Senior pipeline handoff rate',
+      data: handoffData,
+      borderColor: '#d4502a',
+      backgroundColor: 'rgba(212,80,42,0.08)',
+      borderWidth: 2,
+      tension: 0,
+      pointBackgroundColor: '#d4502a',
+      pointBorderColor: '#0f1115',
+      pointBorderWidth: 1,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tt, callbacks: { label: c => c.parsed.y.toFixed(1) + '%' } },
+      annotation: false
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false }, title: axisTitle('Quarter') },
+      y: {
+        beginAtZero: true,
+        max: 28,
+        grid: grid,
+        ticks: { callback: v => v + '%' },
+        title: axisTitle('% of inquiries reaching senior pipeline')
+      }
+    }
+  }
+});
+
+// ============ FIG 02 / Channel effectiveness ============
+const channelLabels = ['Partner referrals', 'Paid search', 'Direct / website', 'Paid social'];
+const channelRate   = [77, 22, 18, 8];   // % to senior pipeline
+const channelShare  = [2, 6, 35, 57];     // % of total volume
+
+new Chart(document.getElementById('ch-channel'), {
+  type: 'bar',
+  data: {
+    labels: channelLabels,
+    datasets: [
+      {
+        label: 'Senior pipeline rate (%)',
+        data: channelRate,
+        backgroundColor: '#d4502a',
+        borderWidth: 0,
+        order: 1
+      },
+      {
+        label: 'Share of total leads (%)',
+        data: channelShare,
+        backgroundColor: '#c9c4b3',
+        borderWidth: 0,
+        order: 2
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tt, callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' } }
+    },
+    scales: {
+      x: { grid: { display: false }, title: axisTitle('Source category') },
+      y: {
+        beginAtZero: true,
+        max: 80,
+        grid: grid,
+        ticks: { callback: v => v + '%' },
+        title: axisTitle('Percentage')
+      }
+    }
+  }
+});
+
+// ============ FIG 03 / CPC by campaign type ============
+const cpcLabels = ['Account A / Brand', 'Account A / Non-brand', 'Account B / Brand', 'Account B / Non-brand'];
+const cpcBaseline = [8.65, 1.38, 4.64, 1.37];
+const cpcCurrent  = [10.22, 4.90, 4.09, 2.53];
+
+new Chart(document.getElementById('ch-cpc'), {
+  type: 'bar',
+  data: {
+    labels: cpcLabels,
+    datasets: [
+      { label: 'Baseline year', data: cpcBaseline, backgroundColor: '#c9c4b3', borderWidth: 0 },
+      { label: 'Current cohort', data: cpcCurrent,  backgroundColor: '#d4502a', borderWidth: 0 }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tt, callbacks: { label: c => c.dataset.label + ': $' + c.parsed.y.toFixed(2) } }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false }, title: axisTitle('Campaign type') },
+      y: {
+        beginAtZero: true,
+        grid: grid,
+        ticks: { callback: v => '$' + v },
+        title: axisTitle('Cost per click ($)')
+      }
+    }
+  }
+});
+
+// ============ FIG 04 / Geo drift ============
+const geoLabels = ['Account A regions targeted', 'Account B regions targeted'];
+
+new Chart(document.getElementById('ch-geo'), {
+  type: 'bar',
+  data: {
+    labels: geoLabels,
+    datasets: [
+      { label: 'Baseline', data: [210, 72],  backgroundColor: '#c9c4b3', borderWidth: 0 },
+      { label: 'Current',  data: [169, 170], backgroundColor: '#d4502a', borderWidth: 0 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tt, callbacks: { label: c => c.dataset.label + ': ' + c.parsed.x + ' regions' } }
+    },
+    scales: {
+      x: { beginAtZero: true, grid: grid, title: axisTitle('Number of regions receiving impressions') },
+      y: { grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
