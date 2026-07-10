@@ -362,7 +362,8 @@
   .vis-stl,
   .vis-galvb,
   .vis-dc,
-  .vis-slq {
+  .vis-slq,
+  .vis-gtm {
     background: linear-gradient(135deg, #f7f5f0 0%, #efece4 100%);
   }
 
@@ -376,6 +377,7 @@
   .card:nth-child(2) { animation-delay: 0.22s; }
   .card:nth-child(3) { animation-delay: 0.34s; }
   .card:nth-child(4) { animation-delay: 0.46s; }
+  .card:nth-child(5) { animation-delay: 0.58s; }
 
   @keyframes cardReveal {
     to {
@@ -483,7 +485,84 @@
 
   <div class="cards">
 
-    <!-- Card 1: Speed to Lead -->
+    <!-- Card 1: GTM Audit -->
+    <a class="card" href="https://jmillerokc.github.io/portfolio/gtmaudit.html">
+      <div class="card-visual vis-gtm">
+        <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <!-- Caption -->
+          <text x="20" y="22" fill="#6c6a63" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="1.2">SPEND SHARE vs. SQL SHARE · BY CHANNEL</text>
+
+          <!-- Column headers -->
+          <g font-family="'JetBrains Mono', monospace" font-size="8" fill="#6c6a63" letter-spacing="0.8">
+            <text x="195" y="48" text-anchor="end">← SPEND</text>
+            <text x="205" y="48">SQL →</text>
+          </g>
+
+          <!-- Center axis -->
+          <line x1="200" y1="52" x2="200" y2="222" stroke="#0f1115" stroke-width="1.5"/>
+
+          <!-- Faint gridlines -->
+          <g stroke="#d9d4c7" stroke-width="0.5" stroke-dasharray="2,3">
+            <line x1="60" y1="52" x2="60" y2="222"/>
+            <line x1="130" y1="52" x2="130" y2="222"/>
+            <line x1="270" y1="52" x2="270" y2="222"/>
+            <line x1="340" y1="52" x2="340" y2="222"/>
+          </g>
+
+          <!-- Row 1: Paid Search — over-invested (big spend, tiny SQL) -->
+          <text x="205" y="72" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">Paid Search</text>
+          <rect x="80" y="62" width="120" height="14" fill="#8a3a26" fill-opacity="0.55"/>
+          <text x="86" y="73" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="9">38%</text>
+          <rect x="200" y="62" width="34" height="14" fill="#8a3a26" fill-opacity="0.55"/>
+          <text x="238" y="73" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">11%</text>
+
+          <!-- Row 2: Paid Social — over-invested -->
+          <text x="205" y="102" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">Paid Social</text>
+          <rect x="118" y="92" width="82" height="14" fill="#c9846b" fill-opacity="0.7"/>
+          <text x="124" y="103" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">26%</text>
+          <rect x="200" y="92" width="42" height="14" fill="#c9846b" fill-opacity="0.7"/>
+          <text x="246" y="103" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">14%</text>
+
+          <!-- Row 3: Organic — balanced -->
+          <text x="205" y="132" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">Organic</text>
+          <rect x="152" y="122" width="48" height="14" fill="#d4a574" fill-opacity="0.75"/>
+          <text x="158" y="133" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">15%</text>
+          <rect x="200" y="122" width="66" height="14" fill="#d4a574" fill-opacity="0.75"/>
+          <text x="270" y="133" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">21%</text>
+
+          <!-- Row 4: Email — under-invested (small spend, big SQL) -->
+          <text x="205" y="162" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">Email</text>
+          <rect x="170" y="152" width="30" height="14" fill="#2f6d4f" fill-opacity="0.6"/>
+          <text x="176" y="163" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">9%</text>
+          <rect x="200" y="152" width="88" height="14" fill="#2f6d4f" fill-opacity="0.6"/>
+          <text x="292" y="163" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">28%</text>
+
+          <!-- Row 5: Referral / Direct — under-invested -->
+          <text x="205" y="192" fill="#0f1115" font-family="'JetBrains Mono', monospace" font-size="9">Referral</text>
+          <rect x="163" y="182" width="37" height="14" fill="#2f6d4f" fill-opacity="0.8"/>
+          <text x="169" y="193" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="9">12%</text>
+          <rect x="200" y="182" width="82" height="14" fill="#2f6d4f" fill-opacity="0.8"/>
+          <text x="286" y="193" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="9">26%</text>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+        </div>
+        <h3>The Wrong Half: Auditing where the growth engine was actually converting</h3>
+        <p>Historical audit of channel, geo, and CRM data reconciled into one picture of where budget needed to move to drive measurable growth.</p>
+        <div class="card-foot">
+          <div class="cta-row">
+            <span class="card-cta">Read case study <span class="arrow">→</span></span>
+          </div>
+          <div class="tags">
+            <span>GTM Strategy</span>
+            <span>Attribution</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Card 2: Speed to Lead -->
     <a class="card" href="https://jmillerokc.github.io/portfolio/speedtolead">
       <div class="card-visual vis-stl">
         <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -573,7 +652,7 @@
       </div>
     </a>
 
-    <!-- Card 2: Dynamic Content -->
+    <!-- Card 3: Dynamic Content -->
     <a class="card" href="https://jmillerokc.github.io/portfolio/dynamiccontent">
       <div class="card-visual vis-dc">
         <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -634,7 +713,7 @@
       </div>
     </a>
 
-    <!-- Card 3: Galvb -->
+    <!-- Card 4: Galvb -->
     <a class="card" href="https://jmillerokc.github.io/portfolio/galvb">
       <div class="card-visual vis-galvb">
         <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -696,7 +775,7 @@
       </div>
     </a>
 
-    <!-- Card 4: SEM Lead Quality -->
+    <!-- Card 5: SEM Lead Quality -->
     <a class="card" href="https://jmillerokc.github.io/portfolio/semleadquality">
       <div class="card-visual vis-slq">
         <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
