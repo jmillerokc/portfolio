@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Growth Engine That Was Measuring the Wrong Half — Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f1115;
+  --ink-soft: #2b2f3a;
+  --paper: #f7f5f0;
+  --paper-2: #efece4;
+  --rule: #d9d4c7;
+  --accent: #d4502a;
+  --accent-soft: #e8d6c8;
+  --green: #2f6d4f;
+  --muted: #6c6a63;
+  --max: 1180px;
+
+  /* page-specific extensions, warm/desaturated family only */
+  --sev: #6b2417;
+  --sig: #8a3a26;
+  --mod: #b8624a;
+  --slight: #dd9377;
+  --under: #b8912c;
+  --nospend: #e4e0d4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(15,17,21,0.025) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 32px;
+  max-width: var(--max);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  transition: gap 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.35s ease,
+              border-color 0.35s ease,
+              background 0.35s ease;
+}
+.back-link .arrow {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.back-link:hover { gap: 14px; color: var(--accent); border-color: var(--ink); background: #fff; }
+.back-link:hover .arrow { transform: translateX(-4px); }
+
+/* Hero */
+.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--rule); }
+.hero .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero .eyebrow::before { content: ""; display: inline-block; width: 32px; height: 1px; background: var(--accent); }
+.hero h1 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: clamp(38px, 5.4vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 20px;
+  max-width: 22ch;
+}
+.hero .subhead {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+.hero .lede { max-width: 56ch; font-size: 18px; color: var(--ink-soft); line-height: 1.55; }
+
+.scorecard { margin-top: 56px; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); padding-top: 24px; }
+.scorecard-title { font-family: 'Inter Tight', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 24px; max-width: 50ch; }
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--rule); }
+.hero-stats .stat { padding: 24px 24px 24px 0; border-right: 1px solid var(--rule); }
+.hero-stats .stat:last-child { border-right: none; padding-right: 0; }
+.hero-stats .stat:not(:first-child) { padding-left: 24px; }
+.hero-stats .stat .num { font-family: 'Inter Tight', sans-serif; font-size: 38px; font-weight: 700; letter-spacing: -0.025em; line-height: 1; }
+.hero-stats .stat .num .arrow { color: var(--accent); font-weight: 500; }
+.hero-stats .stat .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 10px; line-height: 1.4; }
+
+/* Sections */
+section { padding: 80px 0; border-bottom: 1px solid var(--rule); }
+.section-head { display: grid; grid-template-columns: 200px 1fr; gap: 60px; margin-bottom: 48px; align-items: start; }
+.section-head .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 12px;
+  border-top: 2px solid var(--ink);
+}
+.section-head h2 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: clamp(30px, 3.6vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 0 0 16px;
+  max-width: 22ch;
+}
+.section-head p { font-size: 17px; color: var(--ink-soft); margin: 0; max-width: 60ch; }
+
+.body-grid { display: grid; grid-template-columns: 200px 1fr; gap: 60px; }
+.body-grid .side { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.body-grid .content > * + * { margin-top: 20px; }
+.body-grid .content p { margin: 0; }
+.body-grid h3 { font-family: 'Inter Tight', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: -0.015em; margin: 40px 0 12px; }
+
+/* Chart block */
+.chart-block { background: #fff; border: 1px solid var(--rule); padding: 36px; margin: 32px 0; position: relative; }
+.chart-block::before { content: ""; position: absolute; top: -1px; left: -1px; width: 24px; height: 24px; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); }
+.chart-block::after { content: ""; position: absolute; bottom: -1px; right: -1px; width: 24px; height: 24px; border-bottom: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+.chart-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.chart-heading { font-family: 'Inter Tight', sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 28px; }
+
+/* Insight */
+.insight { background: var(--ink); color: var(--paper); padding: 48px 56px; margin: 48px 0; position: relative; overflow: hidden; }
+.insight::before { content: "\201C"; position: absolute; top: 12px; left: 24px; font-family: 'Fraunces', serif; font-size: 110px; color: var(--accent); opacity: 0.3; line-height: 1; }
+.insight .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.insight blockquote { margin: 0; font-family: 'Inter Tight', sans-serif; font-size: clamp(20px, 2.2vw, 26px); font-weight: 500; line-height: 1.35; letter-spacing: -0.015em; max-width: 36ch; }
+
+/* Metric row */
+.metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0; margin: 0 0 24px; border: 1px solid var(--rule); background: #fff; }
+.metric { padding: 20px 22px; border-right: 1px solid var(--rule); }
+.metric:last-child { border-right: none; }
+.metric-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.metric-val { font-family: 'Inter Tight', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+
+/* Clean list */
+ul.clean { list-style: none; padding: 0; margin: 0; }
+ul.clean li { padding: 12px 0; border-bottom: 1px solid var(--rule); display: flex; gap: 18px; align-items: baseline; }
+ul.clean li::before { content: "\2192"; color: var(--accent); font-size: 16px; flex-shrink: 0; }
+ul.clean li:last-child { border-bottom: none; }
+
+/* Segment grid */
+.seg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 28px 0; }
+.seg-card { background: #fff; padding: 24px; }
+.seg-card .ix { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 8px; }
+.seg-card h4 { font-family: 'Inter Tight', sans-serif; font-weight: 600; font-size: 19px; margin: 0 0 6px; letter-spacing: -0.015em; }
+.seg-card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Funnel (hand-coded SVG) */
+.funnel-svg { width: 100%; height: auto; display: block; }
+.funnel-label { font-family: 'Inter Tight', sans-serif; font-weight: 600; font-size: 15px; fill: #fff; }
+.funnel-pct { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 16px; fill: var(--ink); }
+.funnel-note { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--muted); letter-spacing: 0.06em; }
+
+/* State grid map */
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  grid-auto-rows: 42px;
+  gap: 3px;
+  margin: 28px 0 16px;
+}
+.state-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+.state-cell.nospend { color: var(--muted); background: var(--nospend) !important; }
+.legend { display: flex; flex-wrap: wrap; gap: 18px 28px; margin-top: 20px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.legend-swatch { width: 14px; height: 14px; flex-shrink: 0; }
+.risk-callout { border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 20px; }
+.risk-callout .rc-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.risk-callout p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+/* Footer */
+footer { padding: 70px 0 50px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
+footer .mark { font-family: 'Inter Tight', sans-serif; font-size: 28px; font-weight: 700; color: var(--ink); text-transform: none; letter-spacing: -0.025em; margin-bottom: 20px; }
+
+@media (max-width: 880px) {
+  .topbar { padding: 20px 24px; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .wrap { padding: 0 24px; }
+  .hero { padding: 50px 0 40px; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .hero-stats .stat { padding: 18px 14px !important; border-right: none !important; border-bottom: 1px solid var(--rule); }
+  .hero-stats .stat:nth-child(odd) { border-right: 1px solid var(--rule) !important; }
+  .hero-stats .stat:nth-last-child(-n+2) { border-bottom: none; }
+  section { padding: 56px 0; }
+  .section-head, .body-grid { grid-template-columns: 1fr; gap: 24px; }
+  .body-grid .side { display: none; }
+  .chart-block { padding: 24px 18px; }
+  .insight { padding: 36px 24px; }
+  .seg-grid { grid-template-columns: 1fr; }
+  .metric-row { grid-template-columns: repeat(2, 1fr); }
+  .metric { border-right: none; border-bottom: 1px solid var(--rule); }
+  .metric:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .metric:nth-last-child(-n+2) { border-bottom: none; }
+  .state-grid { grid-template-columns: repeat(6, 1fr); grid-auto-rows: 34px; }
+  .state-cell { font-size: 9px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>Case Study&nbsp;&nbsp;/&nbsp;&nbsp;Paid Media &amp; CRM Audit</div>
+  <a class="back-link" href="https://jmillerokc.github.io/portfolio/">
+    <span class="arrow">←</span>
+    <span>Take me back</span>
+  </a>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Case Study</div>
+    <h1>Measuring the <em style="font-family:'Fraunces',serif;font-style:italic;font-weight:500;">Wrong Half</em> of a Growth Engine</h1>
+    <div class="subhead">Multi-market lead generation audit, paid media + CRM</div>
+    <p class="lede">A national location-based brand was spending confidently across six paid channels and 40+ markets.</p>
+
+    <div class="scorecard">
+      <h2 class="scorecard-title">Historical audit of channel, geo, and CRM data reconciled into one picture of where budget actually needed to move.</h2>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num">6 <span class="arrow">states</span></div>
+          <div class="label">took 48% of spend on 33% of qualified leads</div>
+        </div>
+        <div class="stat">
+          <div class="num">71<span class="arrow">%</span></div>
+          <div class="label">drop at the steepest funnel stage</div>
+        </div>
+        <div class="stat">
+          <div class="num">$740 <span class="arrow">CP SQL</span></div>
+          <div class="label">cost per qualified lead on the least efficient scaled channel</div>
+        </div>
+        <div class="stat">
+          <div class="num">3<span class="arrow">%</span></div>
+          <div class="label">of leads carried a complete qualification profile</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">01 / Discovery</div>
+      <div>
+        <h2>Demand was plentiful, but was not driving qualification</h2>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Lead-to-close<br>funnel</div>
+      <div class="content">
+        <p>Inquiry volume was never the issue. Every channel, every market, every campaign fed the top of the funnel without much trouble.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 01 / LEAD-TO-CLOSE FUNNEL</div>
+          <div class="chart-heading">Only 14% of inquiries ever reach a scheduled consultation</div>
+          <svg class="funnel-svg" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+            <!-- Stage 1: Inquiries 100% -->
+            <polygon points="20,10 680,10 650,52 50,52" fill="#f0c4ac"/>
+            <text x="350" y="36" text-anchor="middle" class="funnel-label" fill="#5a3323">Inquiries</text>
+
+            <!-- Stage 2: Consultation Scheduled 14.2% -->
+            <polygon points="50,60 650,60 610,102 90,102" fill="#e0956f"/>
+            <text x="350" y="86" text-anchor="middle" class="funnel-label" fill="#3a1f14">Consultation Scheduled</text>
+            <text x="700" y="86" text-anchor="end" class="funnel-pct">14.2%</text>
+
+            <!-- Stage 3: Qualification Completed 4.1% -->
+            <polygon points="90,110 610,110 570,152 130,152" fill="#c96c46" />
+            <text x="350" y="136" text-anchor="middle" class="funnel-label">Qualification Completed</text>
+            <text x="700" y="136" text-anchor="end" class="funnel-pct">4.1%</text>
+
+            <!-- Stage 4: Solution Review 3.2% -->
+            <polygon points="130,160 570,160 535,202 165,202" fill="#b85a3a" />
+            <text x="350" y="186" text-anchor="middle" class="funnel-label">Solution Review</text>
+            <text x="700" y="186" text-anchor="end" class="funnel-pct">3.2%</text>
+
+            <!-- Stage 5: Proof of Concept 2.0% -->
+            <polygon points="165,210 535,210 500,252 200,252" fill="#a04a2e" />
+            <text x="350" y="236" text-anchor="middle" class="funnel-label">Proof of Concept</text>
+            <text x="700" y="236" text-anchor="end" class="funnel-pct">2.0%</text>
+
+            <!-- Stage 6: Decision Meeting 0.9% -->
+            <polygon points="200,260 500,260 470,302 230,302" fill="#8a3a26" />
+            <text x="350" y="286" text-anchor="middle" class="funnel-label">Decision Meeting</text>
+            <text x="700" y="286" text-anchor="end" class="funnel-pct">0.9%</text>
+
+            <!-- Stage 7: Closed-Won 0.6% -->
+            <polygon points="230,310 470,310 445,352 255,352" fill="#6b2417" />
+            <text x="350" y="336" text-anchor="middle" class="funnel-label">Closed-Won</text>
+            <text x="700" y="336" text-anchor="end" class="funnel-pct">0.6%</text>
+          </svg>
+        </div>
+
+        <div class="insight">
+          <div class="label">Where To Focus</div>
+          <blockquote>Consultation Scheduled to Qualification Completed drops 71%, the steepest stage-over-stage falloff in the funnel. Everything downstream is starved by what happens right there.</blockquote>
+        </div>
+
+        <p>Improving the inquiry-to-consultation rate would lift the whole funnel, but the sharper diagnostic question was what happens between a scheduled consultation and a completed qualification. That gap could be a fit problem, a follow-up problem, or a scoring problem. It could not be answered without first fixing what the CRM was and was not capturing, which is where the audit went next.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">02 / Diagnosis</div>
+      <div>
+        <h2>The cheapest channels by lead were the most expensive by outcome.</h2>
+        <p>Six paid channels, six very different stories once cost was measured against qualified leads instead of raw volume.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Channel<br>benchmarks</div>
+      <div class="content">
+        <p>Every channel looked defensible in isolation. Side by side against qualification rate, the picture changed. Two channels were quietly carrying the program. Two more were consuming budget that looked efficient on the surface.</p>
+
+        <div class="seg-grid">
+          <div class="seg-card">
+            <div class="ix">WINNER</div>
+            <h4>Branded Search</h4>
+            <p>41% leads to qualified &middot; $480 cost per qualified lead. Most efficient channel in the mix. Intent is obvious. Protect and maintain.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">SCALE</div>
+            <h4>Competitor Conquest Search</h4>
+            <p>48% leads to qualified. Highest qualification rate in the account. Test increased spend to grow volume.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">MEASURE</div>
+            <h4>Meta Lead Form</h4>
+            <p>21% leads to qualified &middot; spend not isolated in platform reporting. Converts well, but missing spend data to score true efficiency.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">FIX</div>
+            <h4>Video / Demand Gen</h4>
+            <p>$1,920 cost per qualified lead. Highest cost per qualified lead in the mix. Spend isn't pulling weight as a prospecting engine. Shift toward awareness goals.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">LOW QUALITY</div>
+            <h4>Display</h4>
+            <p>1.8% leads to qualified &middot; $9 cost per lead. Cheap leads, but volume doesn't qualify. Reallocate.</p>
+          </div>
+          <div class="seg-card">
+            <div class="ix">LOW QUALITY</div>
+            <h4>Automated Bidding / Broad Match</h4>
+            <p>2.9% leads to qualified. Cheap leads, but volume doesn't qualify. Reallocate.</p>
+          </div>
+        </div>
+
+        <p>A blended $54 cost per lead against a $740 cost per qualified lead is the tell. That gap is driven mostly by the low-qualifying volume channels, and inflated further by a channel optimized for lead volume that isn't producing much of either quantity or quality.</p>
+
+        <h3>None of this was fully visible without fixing the CRM first</h3>
+        <p>Channel-level qualification rates are only as good as the qualification data behind them, and that data had five separate holes.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 02 / CRM VISIBILITY</div>
+          <div class="chart-heading">Qualification is barely being recorded, let alone measured by channel</div>
+          <div class="metric-row">
+            <div class="metric">
+              <div class="metric-label">Complete Qual. Profile</div>
+              <div class="metric-val">3%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Consultation Booking Rate</div>
+              <div class="metric-val">19%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">UTM Fields Populated</div>
+              <div class="metric-val">52.3%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Bucketed As "Web"</div>
+              <div class="metric-val">81%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Lost Reason Recorded</div>
+              <div class="metric-val">6.4%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="label">Key Insight</div>
+          <blockquote>A qualified-lead marker isn't clearly defined in the CRM. Outreach contacted leads at scale, and only 19% ever received a scheduled date, the largest measurable drop in the whole system.</blockquote>
+        </div>
+
+        <p>The fix wasn't more spend or a new channel mix. It was date stamps on every lead status change, a qualification score built into the existing lead rating field, and status-reason picklists specific enough to tell a fit problem from a follow-up problem. Until that existed, every channel number above was a best estimate, not a measurement.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <div class="num">03 / Intervention</div>
+      <div>
+        <h2>Spend and results were living in different states.</h2>
+        <p>Overlaying dollars spent against qualified leads and closed business by state exposed a geography problem hiding under the channel problem.</p>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="side">Geo spend<br>alignment</div>
+      <div class="content">
+        <p>Mapping spend-to-outcome alignment by state turned a channel audit into a geo audit. A small cluster of states was absorbing outsized budget relative to what they were producing, while several under-invested states were already converting well on very little spend.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 03 / SPEND TO OUTCOME ALIGNMENT</div>
+          <div class="chart-heading">Where dollars were spent compared to qualified-lead and closed-won output</div>
+
+          <div class="state-grid">
+            <div class="state-cell nospend" style="grid-column:9;grid-row:1;">ME</div>
+            <div class="state-cell nospend" style="grid-column:8;grid-row:2;">VT</div>
+            <div class="state-cell nospend" style="grid-column:9;grid-row:2;">NH</div>
+
+            <div class="state-cell" style="grid-column:1;grid-row:3;background:var(--mod);">WA</div>
+            <div class="state-cell nospend" style="grid-column:2;grid-row:3;">ID</div>
+            <div class="state-cell nospend" style="grid-column:3;grid-row:3;">MT</div>
+            <div class="state-cell nospend" style="grid-column:4;grid-row:3;">ND</div>
+            <div class="state-cell" style="grid-column:5;grid-row:3;background:var(--mod);">MN</div>
+            <div class="state-cell" style="grid-column:6;grid-row:3;background:var(--slight);">IL</div>
+            <div class="state-cell" style="grid-column:7;grid-row:3;background:var(--green);">WI</div>
+            <div class="state-cell" style="grid-column:8;grid-row:3;background:var(--green);">MI</div>
+            <div class="state-cell" style="grid-column:9;grid-row:3;background:var(--under);">NY</div>
+            <div class="state-cell" style="grid-column:10;grid-row:3;background:var(--under);">MA</div>
+
+            <div class="state-cell" style="grid-column:1;grid-row:4;background:var(--green);">OR</div>
+            <div class="state-cell nospend" style="grid-column:2;grid-row:4;">UT</div>
+            <div class="state-cell nospend" style="grid-column:3;grid-row:4;">WY</div>
+            <div class="state-cell nospend" style="grid-column:4;grid-row:4;">SD</div>
+            <div class="state-cell" style="grid-column:5;grid-row:4;background:var(--green);">IA</div>
+            <div class="state-cell" style="grid-column:6;grid-row:4;background:var(--green);">IN</div>
+            <div class="state-cell" style="grid-column:7;grid-row:4;background:var(--sig);">OH</div>
+            <div class="state-cell nospend" style="grid-column:8;grid-row:4;">PA</div>
+            <div class="state-cell" style="grid-column:9;grid-row:4;background:var(--sig);">NJ</div>
+            <div class="state-cell" style="grid-column:10;grid-row:4;background:var(--green);">CT</div>
+            <div class="state-cell nospend" style="grid-column:11;grid-row:4;">RI</div>
+
+            <div class="state-cell" style="grid-column:1;grid-row:5;background:var(--sev);">CA</div>
+            <div class="state-cell" style="grid-column:2;grid-row:5;background:var(--green);">NV</div>
+            <div class="state-cell" style="grid-column:3;grid-row:5;background:var(--mod);">CO</div>
+            <div class="state-cell nospend" style="grid-column:4;grid-row:5;">NE</div>
+            <div class="state-cell" style="grid-column:5;grid-row:5;background:var(--slight);">MO</div>
+            <div class="state-cell" style="grid-column:6;grid-row:5;background:var(--green);">KY</div>
+            <div class="state-cell nospend" style="grid-column:7;grid-row:5;">WV</div>
+            <div class="state-cell" style="grid-column:8;grid-row:5;background:var(--green);">VA</div>
+            <div class="state-cell nospend" style="grid-column:9;grid-row:5;">MD</div>
+            <div class="state-cell nospend" style="grid-column:10;grid-row:5;">DE</div>
+
+            <div class="state-cell" style="grid-column:2;grid-row:6;background:var(--sig);">AZ</div>
+            <div class="state-cell nospend" style="grid-column:3;grid-row:6;">NM</div>
+            <div class="state-cell" style="grid-column:4;grid-row:6;background:var(--under);">KS</div>
+            <div class="state-cell" style="grid-column:5;grid-row:6;background:var(--under);">AR</div>
+            <div class="state-cell" style="grid-column:6;grid-row:6;background:var(--under);">TN</div>
+            <div class="state-cell" style="grid-column:7;grid-row:6;background:var(--green);">NC</div>
+            <div class="state-cell" style="grid-column:8;grid-row:6;background:var(--green);">SC</div>
+            <div class="state-cell nospend" style="grid-column:9;grid-row:6;">DC</div>
+
+            <div class="state-cell nospend" style="grid-column:4;grid-row:7;">OK</div>
+            <div class="state-cell" style="grid-column:5;grid-row:7;background:var(--green);">LA</div>
+            <div class="state-cell" style="grid-column:6;grid-row:7;background:var(--green);">MS</div>
+            <div class="state-cell" style="grid-column:7;grid-row:7;background:var(--green);">AL</div>
+            <div class="state-cell" style="grid-column:8;grid-row:7;background:var(--sev);">GA</div>
+
+            <div class="state-cell" style="grid-column:4;grid-row:8;background:var(--sig);">TX</div>
+            <div class="state-cell" style="grid-column:8;grid-row:8;background:var(--under);">FL</div>
+          </div>
+
+          <div class="legend">
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--sev);"></span>Severely overinvested</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--sig);"></span>Significant overspend</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--mod);"></span>Moderate overspend</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--slight);"></span>Slight overspend</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--green);"></span>Aligned</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--under);"></span>Under-invested</div>
+            <div class="legend-item"><span class="legend-swatch" style="background:var(--nospend);border:1px solid var(--rule);"></span>No spend / immaterial</div>
+          </div>
+
+          <div class="risk-callout">
+            <div class="rc-label">Concentration Risk</div>
+            <p>6 states provided 33% of qualified leads but took 48% of spend.</p>
+          </div>
+        </div>
+
+        <p>Reallocating even a portion of the six overinvested states' budget toward the aligned and under-invested markets was the single highest-leverage move available, ahead of any channel-level fix. It also explained a pattern in the historical close data that had been sitting there the whole time.</p>
+
+        <div class="chart-block">
+          <div class="chart-title">FIG. 04 / WHERE THE WINS CONCENTRATE</div>
+          <div class="chart-heading">Half the wins came from markets that got a quarter of the spend</div>
+          <div class="metric-row">
+            <div class="metric">
+              <div class="metric-label">Closed-Won Since Launch</div>
+              <div class="metric-val">47</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Of Wins From 8 States</div>
+              <div class="metric-val">55%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Of Wins From 11 DMAs</div>
+              <div class="metric-val">45%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Of Spend Behind Those Wins</div>
+              <div class="metric-val">24%</div>
+            </div>
+          </div>
+          <p style="margin-top:20px;">Texas leads with 7 closed-won accounts. Georgia has 5, Florida and Ohio 4 each, Arizona and California 3 each, New Jersey and Arkansas 2 each. These eight states and eleven DMAs become the priority tier for the reallocated budget.</p>
+        </div>
+
+        <div class="insight">
+          <div class="label">The Pattern</div>
+          <blockquote>The states winning the most business were never the states getting the most budget. Alignment, not additional spend, was the lever the whole time.</blockquote>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="mark">A data-driven approach to GTM strategy.</div>
+    <div>Case Study &middot; Personal Portfolio &middot; 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>
