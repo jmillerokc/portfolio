@@ -549,10 +549,10 @@
     <div class="eyebrow">Case Study</div>
     <h1>Volume Build: Budget Analysis and Reallocation</h1>
     <div class="subhead">Historical efficiency analysis with reallocation proposal</div>
-    <p class="lede">Backed seven years of site-level performance into the 720 budget breakdown to find which Location and Category buckets earn their spend, then proposed a flat-budget reallocation that moves dollars to where the math is already proving itself.</p>
+    <p class="lede">Backed seven years of location-level performance into the 720 budget breakdown to find which Location and Category buckets earn their spend, then proposed a flat-budget reallocation that moves dollars to where the math is already proving itself.</p>
 
     <div class="scorecard">
-      <h2 class="scorecard-title">Per-site CAC and growth, plotted against budget allocation, surfaced a clear efficiency frontier:</h2>
+      <h2 class="scorecard-title">Per-location CAC and growth, plotted against budget allocation, surfaced a clear efficiency frontier:</h2>
       <div class="hero-stats">
         <div class="stat">
           <div class="num">$2.02<span class="arrow">M</span></div>
@@ -568,7 +568,7 @@
         </div>
         <div class="stat">
           <div class="num">7<span class="arrow"> yrs</span></div>
-          <div class="label">Of historical site performance</div>
+          <div class="label">Of historical location performance</div>
         </div>
       </div>
     </div>
@@ -581,8 +581,8 @@
     <div class="section-head">
       <div class="num">01 / Diagnosis</div>
       <div>
-        <h2>Per-site budget against historical efficiency.</h2>
-        <p>Each bubble is one Location and Category bucket. Bubble size is the annual budget per site. The top-left quadrant, low CAC, high growth, is the efficiency sweet spot.</p>
+        <h2>Per-location budget against historical efficiency.</h2>
+        <p>Each bubble is one Location and Category bucket. Bubble size is the annual budget per location. The top-left quadrant, low CAC, high growth, is the efficiency sweet spot.</p>
       </div>
     </div>
 
@@ -594,18 +594,18 @@
           <div class="chart-heading">Where each bucket sits on CAC vs. growth</div>
 
           <div class="legend-row">
-            <span><span class="legend-dot" style="background:var(--cat-high)"></span>High Flyer</span>
-            <span><span class="legend-dot" style="background:var(--cat-steady)"></span>Steady Star</span>
-            <span><span class="legend-dot" style="background:var(--cat-ramp)"></span>Ramp Up</span>
+            <span><span class="legend-dot" style="background:var(--cat-high)"></span>Tier 1</span>
+            <span><span class="legend-dot" style="background:var(--cat-steady)"></span>Tier 2</span>
+            <span><span class="legend-dot" style="background:var(--cat-ramp)"></span>Tier 3</span>
             <span><span class="legend-dot" style="background:var(--cat-new)"></span>New</span>
-            <span><span class="legend-dot" style="background:var(--cat-under)"></span>Under Performer</span>
+            <span><span class="legend-dot" style="background:var(--cat-under)"></span>Tier 4</span>
           </div>
           <div class="chart-wrap" style="height:440px"><canvas id="bubbleChart"></canvas></div>
         </div>
 
         <div class="insight">
           <div class="label">Key Insight</div>
-          <blockquote>Bay Area dominates the efficiency frontier, every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Under Performers (10 sites at $36K each) and Chicago Under Performers (6 sites at $49K each), large bubbles in the bottom-right where CAC is high and growth is weak.</blockquote>
+          <blockquote>Bay Area dominates the efficiency frontier, every bucket sits left of $105 CAC. The biggest scrutiny zones are SoCal Tier 4s (10 locations at $36K each) and Chicago Tier 4s (6 locations at $49K each), large bubbles in the bottom-right where CAC is high and growth is weak.</blockquote>
         </div>
       </div>
     </div>
@@ -619,7 +619,7 @@
       <div class="num">02 / Pattern</div>
       <div>
         <h2>The seven-year arc by category.</h2>
-        <p>High Flyers and Steady Stars carry the volume. Ramp Ups carry the growth. Under Performers and New sites burn the most cash per acquisition.</p>
+        <p>Tier 1 and Tier 2 carry the volume while Tier 3 carry the growth. Tier 4 and New Locations burn the most cash per acquisition.</p>
       </div>
     </div>
 
@@ -628,7 +628,7 @@
       <div class="content">
         <div class="chart-block">
           <div class="chart-title">FIG. 02 / VOLUME OVER TIME</div>
-          <div class="chart-heading">Average weeks per site, 2018 vs 2024</div>
+          <div class="chart-heading">Average weeks per location, 2018 vs 2024</div>
 
           <div class="chart-wrap" style="height:300px;margin-bottom:8px"><canvas id="catChart"></canvas></div>
           <div class="legend-row" style="justify-content:center;margin-top:16px">
@@ -652,7 +652,7 @@
 
         <div class="insight">
           <div class="label">Key Insight</div>
-          <blockquote>Steady Stars look stable but have shrunk 16% since 2018 (1,153 → 965 weeks). They're paying full freight for declining volume. Ramp Ups are the only category with double-digit growth (+28%) at acceptable CAC ($124). New sites cost $190 to acquire, nearly 2× a High Flyer,  which is the cost of being early in the curve.</blockquote>
+          <blockquote>Tier 2 look stable but have shrunk 16% since 2018 (1,153 → 965 weeks). They're paying full freight for declining volume. Tier 3 is the only category with double-digit growth (+28%) at acceptable CAC ($124). New locations cost $190 to acquire, nearly 2× a Tier 1s,  which is the cost of being early in the curve.</blockquote>
         </div>
       </div>
     </div>
@@ -666,7 +666,7 @@
       <div class="num">03 / Proposal</div>
       <div>
         <h2>Reallocation, with total spend held flat.</h2>
-        <p>Cut 15% from the four lowest-efficiency buckets and redistribute to the three highest. Same $2.02M envelope, working harder.</p>
+        <p>Cut 15% from the four lowest-efficiency buckets and redistribute to the three highest. Same $2.02M spread, but it's working harder.</p>
       </div>
     </div>
 
@@ -689,7 +689,7 @@
 
         <div class="insight">
           <div class="label">Takeaway</div>
-          <blockquote>Chicago Under Performers lose $44K (16 sites at -15%), SoCal Under Performers lose $54K. That money funds Bay Area Ramp Ups (+60%, where 25% growth is already happening at $94 CAC) and Denver's lone Ramp Up (+150%, at 65% growth and $108 CAC). The reallocation moves dollars toward where the math is already proving itself.</blockquote>
+          <blockquote>Chicago Tier 4s lose $44K (16 locations at -15%), SoCal Tier 4s lose $54K. That money funds Bay Area Tier 3s (+60%, where 25% growth is already happening at $94 CAC) and Denver's lone Tier 3 (+150%, at 65% growth and $108 CAC). The reallocation moves dollars toward where the math is already proving itself.</blockquote>
         </div>
       </div>
     </div>
@@ -699,18 +699,18 @@
 <footer>
   <div class="wrap">
     <div class="mark">Where the math is already proving itself.</div>
-    <div>Case Study · Personal Portfolio · 2024</div>
+    <div>Case Study · Personal Portfolio · 2026</div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 const colors = {
-  'High Flyer':   '#2f6d4f',
-  'Steady Star':  '#3a6e9c',
-  'Ramp Up':      '#d4502a',
+  'Tier 1':   '#2f6d4f',
+  'Tier 2':  '#3a6e9c',
+  'Tier 3':      '#d4502a',
   'New':          '#b85a7a',
-  'Under Performer': '#8a3a26'
+  'Tier 4': '#8a3a26'
 };
 
 // Set Chart.js defaults to match editorial type system
@@ -719,28 +719,28 @@ Chart.defaults.font.size = 11;
 Chart.defaults.color = '#6c6a63';
 
 const buckets = [
- {loc:"Bay Area",cat:"High Flyer",sites:6,cac:100,growth:14.0,budget:26863},
- {loc:"Bay Area",cat:"Ramp Up",sites:3,cac:94,growth:24.7,budget:21709},
- {loc:"Bay Area",cat:"Steady Star",sites:10,cac:98,growth:-2.0,budget:26863},
- {loc:"Bay Area",cat:"Under Performer",sites:4,cac:103,growth:7.0,budget:32865},
- {loc:"Chicago",cat:"Ramp Up",sites:2,cac:144,growth:31.0,budget:31093},
- {loc:"Chicago",cat:"Steady Star",sites:1,cac:132,growth:15.0,budget:19508},
- {loc:"Chicago",cat:"Under Performer",sites:6,cac:144,growth:8.0,budget:49168},
- {loc:"Denver",cat:"New",sites:4,cac:149,growth:2.1,budget:32819},
- {loc:"Denver",cat:"Ramp Up",sites:1,cac:108,growth:65.5,budget:32819},
- {loc:"Seattle",cat:"Under Performer",sites:1,cac:182,growth:8.0,budget:36144},
- {loc:"SoCal",cat:"High Flyer",sites:1,cac:102,growth:25.0,budget:26613},
- {loc:"SoCal",cat:"Ramp Up",sites:7,cac:134,growth:23.4,budget:21491},
- {loc:"SoCal",cat:"Steady Star",sites:1,cac:158,growth:0.0,budget:26613},
- {loc:"SoCal",cat:"Under Performer",sites:10,cac:136,growth:10.9,budget:36246}
+ {loc:"Bay Area",cat:"Tier 1",locations:6,cac:100,growth:14.0,budget:26863},
+ {loc:"Bay Area",cat:"Tier 3",locations:3,cac:94,growth:24.7,budget:21709},
+ {loc:"Bay Area",cat:"Tier 2",locations:10,cac:98,growth:-2.0,budget:26863},
+ {loc:"Bay Area",cat:"Tier 4",locations:4,cac:103,growth:7.0,budget:32865},
+ {loc:"Chicago",cat:"Tier 3",locations:2,cac:144,growth:31.0,budget:31093},
+ {loc:"Chicago",cat:"Tier 2",locations:1,cac:132,growth:15.0,budget:19508},
+ {loc:"Chicago",cat:"Tier 4",locations:6,cac:144,growth:8.0,budget:49168},
+ {loc:"Denver",cat:"New",locations:4,cac:149,growth:2.1,budget:32819},
+ {loc:"Denver",cat:"Tier 3",locations:1,cac:108,growth:65.5,budget:32819},
+ {loc:"Seattle",cat:"Tier 4",locations:1,cac:182,growth:8.0,budget:36144},
+ {loc:"SoCal",cat:"Tier 1",locations:1,cac:102,growth:25.0,budget:26613},
+ {loc:"SoCal",cat:"Tier 3",locations:7,cac:134,growth:23.4,budget:21491},
+ {loc:"SoCal",cat:"Tier 2",locations:1,cac:158,growth:0.0,budget:26613},
+ {loc:"SoCal",cat:"Tier 4",Locations:10,cac:136,growth:10.9,budget:36246}
 ];
 
-const cats = ['High Flyer','Steady Star','Ramp Up','New','Under Performer'];
+const cats = ['Tier 1','Tier 2','Tier 3','New','Tier 4'];
 const bubbleDatasets = cats.map(cat => ({
   label: cat,
   data: buckets.filter(d => d.cat === cat).map(d => ({
     x: d.cac, y: d.growth, r: Math.sqrt(d.budget/1000)*2.2,
-    loc: d.loc, sites: d.sites, budget: d.budget
+    loc: d.loc, locations: d.locations, budget: d.budget
   })),
   backgroundColor: colors[cat]+'99',
   borderColor: colors[cat], borderWidth: 1.5
@@ -759,7 +759,7 @@ new Chart(document.getElementById('bubbleChart'), {
         callbacks:{label:(ctx)=>{const d=ctx.raw;return [
           `${d.loc} — ${ctx.dataset.label}`,
           `CAC: $${Math.round(d.x)}  |  Growth: ${d.y.toFixed(1)}%`,
-          `${d.sites} site${d.sites>1?'s':''}  |  $${d.budget.toLocaleString()}/site`
+          `${d.locations} location${d.locations>1?'s':''}  |  $${d.budget.toLocaleString()}/location`
         ];}}}},
     scales:{
       x:{title:{display:true,text:'Historical CAC ($) — lower is better →', font:{family:"'JetBrains Mono', monospace", size: 10}, color: '#6c6a63'},min:70,max:200,reverse:true,grid:{color:'rgba(15,17,21,0.06)'}},
@@ -768,11 +768,11 @@ new Chart(document.getElementById('bubbleChart'), {
 });
 
 const catData = [
-  {cat:'High Flyer',sites:7,avg_2018:1236,avg_2024:1062,growth:15.6,cac:100},
-  {cat:'Steady Star',sites:12,avg_2018:1153,avg_2024:965,growth:-0.4,cac:106},
-  {cat:'Ramp Up',sites:13,avg_2018:665,avg_2024:620,growth:28.1,cac:124},
-  {cat:'New',sites:13,avg_2018:0,avg_2024:392,growth:2.1,cac:190},
-  {cat:'Under Performer',sites:21,avg_2018:592,avg_2024:471,growth:9.2,cac:134}
+  {cat:'Tier 1',locations:7,avg_2018:1236,avg_2024:1062,growth:15.6,cac:100},
+  {cat:'Tier 2',locations:12,avg_2018:1153,avg_2024:965,growth:-0.4,cac:106},
+  {cat:'Tier 3',locations:13,avg_2018:665,avg_2024:620,growth:28.1,cac:124},
+  {cat:'New',locations:13,avg_2018:0,avg_2024:392,growth:2.1,cac:190},
+  {cat:'Tier 4',locations:21,avg_2018:592,avg_2024:471,growth:9.2,cac:134}
 ];
 
 new Chart(document.getElementById('catChart'),{
@@ -790,7 +790,7 @@ new Chart(document.getElementById('catChart'),{
         padding: 12, cornerRadius: 0,
         callbacks:{label:(ctx)=>`${ctx.dataset.label}: ${ctx.raw?Math.round(ctx.raw).toLocaleString():'n/a'} weeks`}}},
     scales:{x:{grid:{display:false}},
-      y:{title:{display:true,text:'Avg total weeks per site', font:{family:"'JetBrains Mono', monospace", size: 10}, color: '#6c6a63'},grid:{color:'rgba(15,17,21,0.06)'}}}}
+      y:{title:{display:true,text:'Avg total weeks per location', font:{family:"'JetBrains Mono', monospace", size: 10}, color: '#6c6a63'},grid:{color:'rgba(15,17,21,0.06)'}}}}
 });
 
 new Chart(document.getElementById('cacChart'),{
@@ -828,13 +828,13 @@ new Chart(document.getElementById('growthChart'),{
 });
 
 const reallocs = [
-  {loc:'Chicago',cat:'Under Performer',sites:6,cac:144,growth:8.0,old:49168,new_:41793,change:-44251,pct:-15.0,action:'reduce'},
-  {loc:'SoCal',cat:'Under Performer',sites:10,cac:136,growth:10.9,old:36246,new_:30809,change:-54369,pct:-15.0,action:'reduce'},
-  {loc:'Seattle',cat:'Under Performer',sites:1,cac:182,growth:8.0,old:36144,new_:30722,change:-5422,pct:-15.0,action:'reduce'},
-  {loc:'Denver',cat:'New',sites:4,cac:149,growth:2.1,old:32819,new_:27896,change:-19691,pct:-15.0,action:'reduce'},
-  {loc:'Denver',cat:'Ramp Up',sites:1,cac:108,growth:65.5,old:32819,new_:82541,change:49722,pct:151.5,action:'increase'},
-  {loc:'Bay Area',cat:'Ramp Up',sites:3,cac:94,growth:24.7,old:21709,new_:34635,change:38779,pct:59.5,action:'increase'},
-  {loc:'SoCal',cat:'High Flyer',sites:1,cac:102,growth:25.0,old:26613,new_:61844,change:35231,pct:132.4,action:'increase'}
+  {loc:'Chicago',cat:'Tier 4',locations:6,cac:144,growth:8.0,old:49168,new_:41793,change:-44251,pct:-15.0,action:'reduce'},
+  {loc:'SoCal',cat:'Tier 4',locations:10,cac:136,growth:10.9,old:36246,new_:30809,change:-54369,pct:-15.0,action:'reduce'},
+  {loc:'Seattle',cat:'Tier 4',locations:1,cac:182,growth:8.0,old:36144,new_:30722,change:-5422,pct:-15.0,action:'reduce'},
+  {loc:'Denver',cat:'New',locations:4,cac:149,growth:2.1,old:32819,new_:27896,change:-19691,pct:-15.0,action:'reduce'},
+  {loc:'Denver',cat:'Tier 3',locations:1,cac:108,growth:65.5,old:32819,new_:82541,change:49722,pct:151.5,action:'increase'},
+  {loc:'Bay Area',cat:'Tier 3',locations:3,cac:94,growth:24.7,old:21709,new_:34635,change:38779,pct:59.5,action:'increase'},
+  {loc:'SoCal',cat:'Tier 1',locations:1,cac:102,growth:25.0,old:26613,new_:61844,change:35231,pct:132.4,action:'increase'}
 ];
 
 function fmt(n){return '$'+Math.abs(Math.round(n)).toLocaleString()}
@@ -844,11 +844,11 @@ function rowHTML(r){
   return `<div class="bucket-row ${r.action}">
     <div>
       <div class="bucket-name">${r.loc} · ${r.cat}</div>
-      <div class="bucket-sub">${r.sites} site${r.sites>1?'s':''} · CAC $${r.cac} · ${r.growth>=0?'+':''}${r.growth.toFixed(1)}% growth</div>
+      <div class="bucket-sub">${r.locations} location${r.locations>1?'s':''} · CAC $${r.cac} · ${r.growth>=0?'+':''}${r.growth.toFixed(1)}% growth</div>
     </div>
     <div><span class="tag ${r.action}">${tagText}</span></div>
-    <div class="bucket-num"><div class="bucket-sub">old / site</div>${fmt(r.old)}</div>
-    <div class="bucket-num"><div class="bucket-sub">new / site</div>${fmt(r.new_)}</div>
+    <div class="bucket-num"><div class="bucket-sub">old / location</div>${fmt(r.old)}</div>
+    <div class="bucket-num"><div class="bucket-sub">new / location</div>${fmt(r.new_)}</div>
     <div class="bucket-delta ${r.change>=0?'pos':'neg'}">${sign}${fmt(r.change)}<div class="bucket-sub">${r.pct>=0?'+':''}${r.pct.toFixed(0)}% bucket</div></div>
   </div>`;
 }
